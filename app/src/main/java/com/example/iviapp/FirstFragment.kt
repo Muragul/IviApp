@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -38,6 +39,9 @@ class FirstFragment : Fragment() {
         var rootView: ViewGroup = inflater
             .inflate(R.layout.activity_second,
                 container, false) as ViewGroup
+
+        var toolbar: TextView = rootView.findViewById(R.id.toolbar)
+        toolbar.text = "Popular"
 
         recyclerView = rootView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)

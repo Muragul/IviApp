@@ -9,18 +9,6 @@
         android:layout_height="match_parent"
         >
 
-        <TextView
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:background="@color/orange"
-            android:gravity="center_vertical"
-            android:paddingLeft="70dp"
-            android:text="@string/popular"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
@@ -28,13 +16,13 @@
             android:layout_gravity="bottom"
             android:background="@color/orange"
             app:menu="@menu/menu_main"
-            app:itemIconTint="@drawable/selector"/>
+            app:itemIconTint="@drawable/selector"
+            app:itemTextColor="@color/white"/>
 
     <com.example.iviapp.LockableViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="58dp"
         android:layout_marginBottom="56dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </FrameLayout>
