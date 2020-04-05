@@ -3,14 +3,11 @@ package com.example.iviapp
 import com.example.iviapp.model.Genre
 import com.example.iviapp.model.Movie
 import com.example.iviapp.model.MoviesResponse
-import com.google.gson.JsonObject
 
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 object RetrofitService {
 
