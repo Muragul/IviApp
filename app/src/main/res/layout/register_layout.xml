@@ -8,10 +8,8 @@
     >
 
     <LinearLayout
-        android:id="@+id/top_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,23 +20,34 @@
             android:id="@+id/imageView"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_gravity="center"
             android:layout_marginTop="60dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/icon" />
-
+            app:srcCompat="@drawable/icon"
+            android:layout_gravity="center"
+            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Welcome to MovieApp"
+            android:layout_marginTop="10dp"
+            android:textColor="#bababa"
+            android:fontFamily="@font/sansbold"
+            android:textSize="27sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registration"
+            android:textColor="#bababa"
             android:layout_gravity="center"
+            android:textSize="20sp"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/sansbold"
-            android:text="Sign in"
-            android:textColor="#bababa"
-            android:textSize="35sp" />
+            />
 
 
     </LinearLayout>
@@ -48,7 +57,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="130dp"
         android:orientation="vertical"
         android:padding="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -58,13 +67,50 @@
 
 
         <EditText
-            android:id="@+id/et_username"
+            android:id="@+id/reg_et_firstname"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="@drawable/rounded_background"
+            android:fontFamily="sans-serif-light"
+            android:hint="First name"
+            android:padding="10dp"
+            android:textColor="#bababa"
+            android:textColorHint="#bababa"
+            android:textFontWeight="100"
+            android:textSize="18sp"
+            android:cursorVisible="true"
+            android:textCursorDrawable="@drawable/cursor_color"
+
+            />
+
+        <EditText
+            android:id="@+id/reg_et_lastname"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_background"
+            android:fontFamily="sans-serif-light"
+            android:hint="Last name"
+            android:padding="10dp"
+            android:textColor="#bababa"
+            android:textColorHint="#bababa"
+            android:textFontWeight="100"
+            android:textSize="18sp"
             android:cursorVisible="true"
+            android:textCursorDrawable="@drawable/cursor_color"
+
+            />
+
+
+        <EditText
+            android:id="@+id/reg_et_username"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_background"
             android:fontFamily="sans-serif-light"
             android:hint="Username"
             android:padding="10dp"
@@ -72,31 +118,33 @@
             android:textColorHint="#bababa"
             android:textFontWeight="100"
             android:textSize="18sp"
+            android:cursorVisible="true"
             android:textCursorDrawable="@drawable/cursor_color"
             />
 
 
         <EditText
-            android:id="@+id/et_password"
+            android:id="@+id/reg_et_passsword"
+            android:inputType="textPassword"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_background"
-            android:cursorVisible="true"
-            android:textCursorDrawable="@drawable/cursor_color"
             android:fontFamily="sans-serif-light"
             android:hint="Password"
-            android:inputType="textPassword"
             android:padding="10dp"
             android:textColor="#bababa"
             android:textColorHint="#bababa"
             android:textFontWeight="100"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:cursorVisible="true"
+            android:textCursorDrawable="@drawable/cursor_color"
+            />
 
 
         <Button
-            android:id="@+id/login_btn"
+            android:id="@+id/reg_btn"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -104,8 +152,11 @@
             android:background="@drawable/register"
             android:fontFamily="@font/sansbold"
             android:padding="10dp"
-            android:text="Sign in"
-            android:textSize="20sp" />
+            android:text="Register"
+            android:textSize="20sp"
+            android:cursorVisible="true"
+            android:textCursorDrawable="@drawable/cursor_color"
+            />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -120,19 +171,19 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:fontFamily="sans-serif-light"
-                android:text="Don't you have an account?"
+                android:text="Have you account?"
                 android:textColor="#bababa"
                 android:textFontWeight="100"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/tv_link_sign_up"
+                android:id="@+id/tv_link_sign_in"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:fontFamily="sans-serif-light"
-                android:text=" Sign up."
+                android:text=" Sign in."
                 android:textColor="#ed0202"
                 android:textFontWeight="100"
                 android:textSize="16sp" />
