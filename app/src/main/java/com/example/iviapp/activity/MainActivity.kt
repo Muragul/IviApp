@@ -3,14 +3,14 @@ package com.example.iviapp.activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.iviapp.BuildConfig
 import com.example.iviapp.R
-import com.example.iviapp.api.RetrofitService
+import com.example.iviapp.RetrofitService
 import com.example.iviapp.model.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         CurrentUser.user!!.sessionId = session
         saveSession()
         val intent = Intent(this, SecondActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 

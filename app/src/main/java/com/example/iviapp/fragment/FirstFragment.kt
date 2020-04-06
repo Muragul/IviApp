@@ -1,7 +1,6 @@
 package com.example.iviapp.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.iviapp.BuildConfig
 import com.example.iviapp.R
 import com.example.iviapp.adapter.MoviesAdapter
-import com.example.iviapp.api.RetrofitService
+import com.example.iviapp.RetrofitService
 import com.example.iviapp.model.Movie
 import com.example.iviapp.model.MoviesResponse
 import retrofit2.Call

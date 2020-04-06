@@ -1,4 +1,4 @@
-package com.example.iviapp.api
+package com.example.iviapp
 
 import com.example.iviapp.model.MoviesResponse
 import com.google.gson.JsonObject
@@ -34,6 +34,8 @@ interface PostApi {
         @Query("api_key") apiKey: String
     ): Call<JsonObject>
 
+
+
     @GET("account/{account_id}/favorite/movies")
     fun getFavorites(
         @Path("account_id") id: Int,
@@ -42,12 +44,32 @@ interface PostApi {
     ): Call<MoviesResponse>
 
     @POST("account/{account_id}/favorite")
-    fun addToFavorites(
-        @Path("account_id")id: Int,
-        @Query("api_key")apiKey: String,
-        @Query("session_id")sessionId: String,
+    fun rate(
+        @Path("account_id") accountId: Int?,
+        @Query("api_key") apiKey: String,
+        @Query("session_id") sessionId: String?,
         @Body body: JsonObject
     ): Call<JsonObject>
+
+    @POST("account/{account_id}/favorite")
+    fun unrate(
+        @Path("account_id") accountId: Int?,
+        @Query("api_key") apiKey: String,
+        @Query("session_id") sessionId: String?,
+        @Body body: JsonObject
+    ): Call<JsonObject>
+
+    @GET("movie/{movie_id}/account_states")
+    fun hasLike(
+        @Path("movie_id") movieId: Int?,
+        @Query("api_key") apiKey: String,
+        @Query("session_id") sessionId: String?
+    ): Call<JsonObject>
+
+
+
+
+
 
     @GET("authentication/token/new")
     fun getToken(

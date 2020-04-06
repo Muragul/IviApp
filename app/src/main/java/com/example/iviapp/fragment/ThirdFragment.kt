@@ -13,18 +13,14 @@ import androidx.fragment.app.Fragment
 import com.example.iviapp.BuildConfig
 import com.example.iviapp.R
 import com.example.iviapp.activity.MainActivity
-import com.example.iviapp.api.RetrofitService
+import com.example.iviapp.RetrofitService
 import com.example.iviapp.model.CurrentUser
 import com.google.gson.JsonObject
-import kotlinx.android.synthetic.main.profile_page.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class ThirdFragment : Fragment() {
-
-    lateinit var name: TextView
-    lateinit var logoutBtn: Button
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,9 +32,9 @@ class ThirdFragment : Fragment() {
                 R.layout.profile_page,
                 container, false
             ) as ViewGroup
-        name = rootView.findViewById(R.id.name)
-        logoutBtn = rootView.findViewById(R.id.logout)
-        name.text = CurrentUser.user!!.name
+        val name: TextView = rootView.findViewById(R.id.name)
+        val logoutBtn: Button = rootView.findViewById(R.id.logout)
+        name.text = CurrentUser.user!!.userName
         logoutBtn.setOnClickListener {
             val body = JsonObject().apply {
                 addProperty("session_id", CurrentUser.user!!.sessionId)
@@ -58,6 +54,8 @@ class ThirdFragment : Fragment() {
                         )
                         savedUser.edit().remove("current_user").apply()
                         val intent = Intent(rootView.context, MainActivity::class.java)
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                     }
                 }

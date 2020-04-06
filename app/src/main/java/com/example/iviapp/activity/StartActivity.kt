@@ -3,11 +3,11 @@ package com.example.iviapp.activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.iviapp.BuildConfig
 import com.example.iviapp.R
-import com.example.iviapp.api.RetrofitService
+import com.example.iviapp.RetrofitService
 import com.example.iviapp.model.AccountResponse
 import com.example.iviapp.model.CurrentUser
 import com.google.gson.Gson
@@ -34,6 +34,7 @@ class StartActivity : AppCompatActivity() {
             getSavedAccount(CurrentUser.user!!.sessionId.toString())
         else {
             val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
     }
@@ -52,11 +53,12 @@ class StartActivity : AppCompatActivity() {
         CurrentUser.user!!.sessionId = session
         saveSession()
         val intent = Intent(this, SecondActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 
     private fun getSavedAccount(session: String) {
-        var account: AccountResponse
+        var account: AccountResponse?
         RetrofitService.getPostApi().getAccount(
             BuildConfig.THE_MOVIE_DB_API_TOKEN,
             session
@@ -71,13 +73,15 @@ class StartActivity : AppCompatActivity() {
                         AccountResponse::class.java
                     )
                     if (account != null)
-                        loginSuccessful(account, session)
+                        loginSuccessful(account!!, session)
                     else {
                         CurrentUser.user = null
                         val intent = Intent(
                             this@StartActivity,
                             MainActivity::class.java
                         )
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                     }
                 }

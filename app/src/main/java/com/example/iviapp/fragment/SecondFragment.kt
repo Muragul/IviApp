@@ -16,7 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.iviapp.BuildConfig
 import com.example.iviapp.R
 import com.example.iviapp.adapter.MoviesAdapter
-import com.example.iviapp.api.RetrofitService
+import com.example.iviapp.RetrofitService
 import com.example.iviapp.model.CurrentUser
 import com.example.iviapp.model.Movie
 import com.example.iviapp.model.MoviesResponse
