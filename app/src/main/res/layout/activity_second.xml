@@ -35,7 +35,7 @@
         android:background="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
-        tools:context=".MainActivity">
+        tools:context=".activity.MainActivity">
 
 
         <include layout="@layout/content_main" />

@@ -1,4 +1,4 @@
-package com.example.iviapp
+package com.example.iviapp.fragment
 
 import android.os.Bundle
 import android.util.Log
@@ -13,17 +13,21 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.iviapp.BuildConfig
+import com.example.iviapp.R
 import com.example.iviapp.adapter.MoviesAdapter
+import com.example.iviapp.api.RetrofitService
 import com.example.iviapp.model.Movie
 import com.example.iviapp.model.MoviesResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
+import kotlin.collections.ArrayList
 
-class SecondFragment: Fragment() {
+class FirstFragment : Fragment() {
 
-    lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MoviesAdapter
     private lateinit var swipeContainer: SwipeRefreshLayout
     private lateinit var movieList: List<Movie>
@@ -33,16 +37,14 @@ class SecondFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var rootView: ViewGroup = inflater
+        val rootView: ViewGroup = inflater
             .inflate(
                 R.layout.activity_second,
                 container, false
             ) as ViewGroup
 
-        var toolbar: TextView = rootView.findViewById(R.id.toolbar)
-        toolbar.text = "Favorites"
-
-
+        val toolbar: TextView = rootView.findViewById(R.id.toolbar)
+        toolbar.text = "Popular"
 
         recyclerView = rootView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -54,24 +56,24 @@ class SecondFragment: Fragment() {
         return rootView
     }
 
-
-    private fun initViews(){
+    private fun initViews() {
         movieList = ArrayList()
         adapter = activity?.applicationContext?.let { MoviesAdapter(it, movieList) }!!
         recyclerView.layoutManager = GridLayoutManager(activity, 2)
-        recyclerView.itemAnimator= DefaultItemAnimator()
+        recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
-        adapter?.notifyDataSetChanged()
+        adapter.notifyDataSetChanged()
 
         loadJSON()
     }
+
 
     private fun loadJSON() {
         try {
             if (BuildConfig.THE_MOVIE_DB_API_TOKEN.isEmpty()) {
                 return
             }
-            RetrofitService.getPostApi().getTopRatedMovieList(BuildConfig.THE_MOVIE_DB_API_TOKEN)
+            RetrofitService.getPostApi().getPopularMovieList(BuildConfig.THE_MOVIE_DB_API_TOKEN)
                 .enqueue(object : Callback<MoviesResponse> {
                     override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
                         swipeContainer.isRefreshing = false
@@ -81,18 +83,18 @@ class SecondFragment: Fragment() {
                         call: Call<MoviesResponse>,
                         response: Response<MoviesResponse>
                     ) {
-                        Log.d("My_post_list", response.body().toString())
                         if (response.isSuccessful) {
                             val list = response.body()?.getResults()
-                            adapter?.movieList = list as List<Movie>
-                            adapter?.notifyDataSetChanged()
+                            adapter.movieList = list as List<Movie>
+                            adapter.notifyDataSetChanged()
                         }
                         swipeContainer.isRefreshing = false
 
                     }
                 })
         } catch (e: Exception) {
-            Toast.makeText(activity, e.toString(), Toast.LENGTH_SHORT)
+            Toast.makeText(activity, e.toString(), Toast.LENGTH_SHORT).show()
         }
     }
+
 }

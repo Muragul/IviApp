@@ -1,6 +1,5 @@
-package com.example.iviapp
+package com.example.iviapp.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,17 +13,19 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.iviapp.BuildConfig
+import com.example.iviapp.R
 import com.example.iviapp.adapter.MoviesAdapter
+import com.example.iviapp.api.RetrofitService
+import com.example.iviapp.model.CurrentUser
 import com.example.iviapp.model.Movie
 import com.example.iviapp.model.MoviesResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
-import java.util.*
-import kotlin.collections.ArrayList
 
-class FirstFragment : Fragment() {
+class SecondFragment : Fragment() {
 
     lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MoviesAdapter
@@ -36,12 +37,16 @@ class FirstFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var rootView: ViewGroup = inflater
-            .inflate(R.layout.activity_second,
-                container, false) as ViewGroup
+        val rootView: ViewGroup = inflater
+            .inflate(
+                R.layout.activity_second,
+                container, false
+            ) as ViewGroup
 
-        var toolbar: TextView = rootView.findViewById(R.id.toolbar)
-        toolbar.text = "Popular"
+        val toolbar: TextView = rootView.findViewById(R.id.toolbar)
+        toolbar.text = "Favorites"
+
+
 
         recyclerView = rootView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -53,47 +58,47 @@ class FirstFragment : Fragment() {
         return rootView
     }
 
-    private fun initViews(){
+
+    private fun initViews() {
         movieList = ArrayList()
         adapter = activity?.applicationContext?.let { MoviesAdapter(it, movieList) }!!
         recyclerView.layoutManager = GridLayoutManager(activity, 2)
-        recyclerView.itemAnimator= DefaultItemAnimator()
+        recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
-        adapter?.notifyDataSetChanged()
+        adapter.notifyDataSetChanged()
 
         loadJSON()
     }
-
-
 
     private fun loadJSON() {
         try {
             if (BuildConfig.THE_MOVIE_DB_API_TOKEN.isEmpty()) {
                 return
             }
-            RetrofitService.getPostApi().getPopularMovieList(BuildConfig.THE_MOVIE_DB_API_TOKEN)
-                .enqueue(object : Callback<MoviesResponse> {
-                    override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                        swipeContainer.isRefreshing = false
-                    }
+            RetrofitService.getPostApi().getFavorites(
+                CurrentUser.user?.accountId!!,
+                BuildConfig.THE_MOVIE_DB_API_TOKEN,
+                CurrentUser.user?.sessionId.toString()
+            ).enqueue(object : Callback<MoviesResponse> {
+                override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
+                    swipeContainer.isRefreshing = false
+                }
 
-                    override fun onResponse(
-                        call: Call<MoviesResponse>,
-                        response: Response<MoviesResponse>
-                    ) {
-                        Log.d("My_post_list", response.body().toString())
-                        if (response.isSuccessful) {
-                            val list = response.body()?.getResults()
-                            adapter?.movieList = list as List<Movie>
-                            adapter?.notifyDataSetChanged()
-                        }
-                        swipeContainer.isRefreshing = false
-
+                override fun onResponse(
+                    call: Call<MoviesResponse>,
+                    response: Response<MoviesResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        val list = response.body()?.getResults()
+                        adapter.movieList = list as List<Movie>
+                        adapter.notifyDataSetChanged()
                     }
-                })
-        } catch (e: Exception){
-            Toast.makeText(activity, e.toString(), Toast.LENGTH_SHORT)
+                    swipeContainer.isRefreshing = false
+
+                }
+            })
+        } catch (e: Exception) {
+            Toast.makeText(activity, e.toString(), Toast.LENGTH_SHORT).show()
         }
     }
-
 }

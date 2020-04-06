@@ -1,12 +1,14 @@
-package com.example.iviapp
+package com.example.iviapp.activity
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.PagerAdapter
+import com.example.iviapp.*
+import com.example.iviapp.fragment.FirstFragment
+import com.example.iviapp.fragment.SecondFragment
+import com.example.iviapp.fragment.ThirdFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.main_page.*
 
 
 class SecondActivity : AppCompatActivity() {
