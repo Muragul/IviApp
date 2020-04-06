@@ -32,11 +32,7 @@ class DetailActivity : AppCompatActivity() {
     lateinit var overview: TextView
     lateinit var save: ImageButton
     var isFav: Boolean = false
-
-    var movie_id: Int? = null
-    var account_id: Int? = null
-    var session_id: String? = ""
-
+    private var movieId: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,25 +47,21 @@ class DetailActivity : AppCompatActivity() {
         val back: ImageButton = findViewById(R.id.back)
         save = findViewById(R.id.save)
 
-
         if (Build.VERSION.SDK_INT < 16) {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         } else {
-            var decorView: View = window.decorView
-            var options: Int = View.SYSTEM_UI_FLAG_FULLSCREEN
+            val decorView: View = window.decorView
+            val options: Int = View.SYSTEM_UI_FLAG_FULLSCREEN
             decorView.systemUiVisibility = options
         }
 
-        val id = intent.getIntExtra("movie_id", 1)
-        movie_id = id
-        session_id = CurrentUser.user?.sessionId
-        account_id = CurrentUser.user?.accountId
+        movieId = intent.getIntExtra("movie_id", 1)
 
         RetrofitService.getPostApi().getMovie(
-            id,
+            movieId,
             BuildConfig.THE_MOVIE_DB_API_TOKEN
         )
             .enqueue(object : Callback<JsonObject> {
@@ -90,7 +82,6 @@ class DetailActivity : AppCompatActivity() {
                             Movie::class.java
                         )
                         fillViews(movie)
-                        hasLike()
                     }
                 }
 
@@ -101,7 +92,7 @@ class DetailActivity : AppCompatActivity() {
         }
 
         save.setOnClickListener {
-            if (isFav){
+            if (isFav) {
                 Glide.with(this).load(R.drawable.ic_turned_in).into(save)
             } else {
                 Glide.with(this).load(R.drawable.ic_turned).into(save)
@@ -123,12 +114,13 @@ class DetailActivity : AppCompatActivity() {
             adult.text = "No"
         rating.text = movie.voteAverage.toString()
         popularity.text = movie.popularity.toString()
+        hasLike()
     }
 
 
     private fun hasLike() {
         RetrofitService.getPostApi()
-            .hasLike(movie_id, BuildConfig.THE_MOVIE_DB_API_TOKEN, session_id)
+            .hasLike(movieId, BuildConfig.THE_MOVIE_DB_API_TOKEN, CurrentUser.user?.sessionId)
             .enqueue(object : Callback<JsonObject> {
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 }
@@ -142,13 +134,12 @@ class DetailActivity : AppCompatActivity() {
                             response.body(),
                             FavoriteResponse::class.java
                         ).favorite
-                        if (like){
+                        isFav = if (like) {
                             save.setImageResource(R.drawable.ic_turned)
-                            isFav = true
-                        }
-                        else {
+                            true
+                        } else {
                             save.setImageResource(R.drawable.ic_turned_in)
-                            isFav = false
+                            false
                         }
                     }
 
@@ -160,12 +151,17 @@ class DetailActivity : AppCompatActivity() {
     private fun likeMovie(favourite: Boolean) {
         val body = JsonObject().apply {
             addProperty("media_type", "movie")
-            addProperty("media_id", movie_id)
+            addProperty("media_id", movieId)
             addProperty("favorite", favourite)
         }
 
         RetrofitService.getPostApi()
-            .rate(account_id, BuildConfig.THE_MOVIE_DB_API_TOKEN, session_id, body)
+            .rate(
+                CurrentUser.user?.accountId,
+                BuildConfig.THE_MOVIE_DB_API_TOKEN,
+                CurrentUser.user?.sessionId,
+                body
+            )
             .enqueue(object : Callback<JsonObject> {
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 }

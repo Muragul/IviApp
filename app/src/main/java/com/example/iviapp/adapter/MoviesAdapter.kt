@@ -36,7 +36,6 @@ class MoviesAdapter(var context: Context, var movieList: List<Movie>) :
 
 
             title.text = post?.originalTitle
-            val vote=post?.voteAverage
 
             Glide.with(context)
                 .load(post?.getPosterPath())
@@ -44,14 +43,6 @@ class MoviesAdapter(var context: Context, var movieList: List<Movie>) :
 
             view.setOnClickListener {
                 val intent= Intent(view.context, DetailActivity::class.java)
-                intent.putExtra("original_title", post?.originalTitle)
-                intent.putExtra("poster_path", post?.getPosterPath())
-                intent.putExtra("backdrop_path", post?.getBackdropPath())
-                intent.putExtra("overview", post?.overview)
-                intent.putExtra("vote_average", (post?.voteAverage).toString())
-                intent.putExtra("release_date", post?.releaseDate)
-                intent.putExtra("adult", post?.adult)
-                intent.putExtra("popularity", (post?.popularity).toString())
                 intent.putExtra("movie_id", post?.id)
                 view.context.startActivity(intent)
             }

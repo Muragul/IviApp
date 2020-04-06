@@ -18,7 +18,7 @@ class SecondActivity : AppCompatActivity() {
     private var f2: Fragment = SecondFragment()
     private var f3: Fragment = ThirdFragment()
     private var list: MutableList<Fragment> = ArrayList()
-    lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
