@@ -16,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.lang.reflect.Type
 import kotlin.coroutines.CoroutineContext
 
@@ -69,19 +70,26 @@ class StartActivity : AppCompatActivity(), CoroutineScope {
 
     private fun getSavedAccountCoroutine(session: String) {
         launch {
-            val response = RetrofitService.getPostApi()
-                .getAccountCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, session)
-            if (response.isSuccessful) {
-                val account = Gson().fromJson(response.body(), AccountResponse::class.java)
-                if (account != null)
-                    loginSuccessful(account, session)
-                else {
-                    CurrentUser.user = null
-                    val intent = Intent(this@StartActivity, MainActivity::class.java)
-                    intent.flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
+            try {
+                val response = RetrofitService.getPostApi()
+                    .getAccountCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, session)
+                if (response.isSuccessful) {
+                    val account = Gson().fromJson(response.body(), AccountResponse::class.java)
+                    if (account != null)
+                        loginSuccessful(account, session)
+                    else {
+                        CurrentUser.user = null
+                        val intent = Intent(this@StartActivity, MainActivity::class.java)
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                    }
                 }
+            } catch (e: Exception) {
+                val intent = Intent(this@StartActivity, SecondActivity::class.java)
+                intent.flags =
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
             }
         }
     }

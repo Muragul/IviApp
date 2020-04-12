@@ -1,5 +1,6 @@
 package com.example.iviapp.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,15 +13,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.iviapp.BuildConfig
-import com.example.iviapp.R
+import com.example.iviapp.*
+import com.example.iviapp.activity.SecondActivity
 import com.example.iviapp.adapter.MoviesAdapter
-import com.example.iviapp.RetrofitService
 import com.example.iviapp.model.Movie
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.lang.Exception
 import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
 
@@ -31,6 +29,8 @@ class FirstFragment : Fragment(), CoroutineScope {
     private lateinit var swipeContainer: SwipeRefreshLayout
     private lateinit var movieList: List<Movie>
     private val job = Job()
+
+    private var movieDao: MovieDao? = null
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -55,6 +55,8 @@ class FirstFragment : Fragment(), CoroutineScope {
         val toolbar: TextView = rootView.findViewById(R.id.toolbar)
         toolbar.text = "Popular"
 
+        movieDao = MovieDatabase.getDatabase(activity as Context).movieDao()
+
         recyclerView = rootView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         swipeContainer = rootView.findViewById(R.id.main_content)
@@ -76,18 +78,29 @@ class FirstFragment : Fragment(), CoroutineScope {
         getMovieListCoroutine()
     }
 
+
     private fun getMovieListCoroutine() {
         launch {
             swipeContainer.isRefreshing = true
-            val response = RetrofitService.getPostApi()
-                .getPopularMovieListCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN)
-            if (response.isSuccessful) {
-                val list = response.body()?.getResults()
-                adapter.movieList = list as List<Movie>
-                adapter.notifyDataSetChanged()
-            } else {
-                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+            val list = withContext(Dispatchers.IO) {
+                try {
+                    val response = RetrofitService.getPostApi()
+                        .getPopularMovieListCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN)
+                    if (response.isSuccessful) {
+                        val result = response.body()?.getResults()
+                        if (!result.isNullOrEmpty()) {
+                            movieDao?.insertAll(result as List<Movie>)
+                        }
+                        result
+                    } else {
+                        movieDao?.getAll() ?: emptyList()
+                    }
+                } catch (e: Exception) {
+                    movieDao?.getAll() ?: emptyList()
+                }
             }
+            adapter.movieList = list as List<Movie>
+            adapter.notifyDataSetChanged()
             swipeContainer.isRefreshing = false
         }
     }
