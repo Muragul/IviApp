@@ -1,12 +1,10 @@
 package com.example.iviapp.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,18 +17,28 @@ import com.example.iviapp.adapter.MoviesAdapter
 import com.example.iviapp.RetrofitService
 import com.example.iviapp.model.CurrentUser
 import com.example.iviapp.model.Movie
-import com.example.iviapp.model.MoviesResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.lang.Exception
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-class SecondFragment : Fragment() {
+class SecondFragment : Fragment(), CoroutineScope {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MoviesAdapter
     private lateinit var swipeContainer: SwipeRefreshLayout
     private lateinit var movieList: List<Movie>
+    private val job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,38 +75,25 @@ class SecondFragment : Fragment() {
         recyclerView.adapter = adapter
         adapter.notifyDataSetChanged()
 
-        loadJSON()
+        getFavoritesCoroutine()
     }
 
-    private fun loadJSON() {
-        try {
-            if (BuildConfig.THE_MOVIE_DB_API_TOKEN.isEmpty()) {
-                return
+    private fun getFavoritesCoroutine() {
+        launch {
+            swipeContainer.isRefreshing = true
+            val response = RetrofitService.getPostApi()
+                .getFavoritesCoroutine(
+                    CurrentUser.user?.accountId!!,
+                    BuildConfig.THE_MOVIE_DB_API_TOKEN,
+                    CurrentUser.user?.sessionId.toString()
+                )
+            if (response.isSuccessful) {
+                val list = response.body()?.getResults()
+                adapter.movieList = list as List<Movie>
+                adapter.notifyDataSetChanged()
             }
-            RetrofitService.getPostApi().getFavorites(
-                CurrentUser.user?.accountId!!,
-                BuildConfig.THE_MOVIE_DB_API_TOKEN,
-                CurrentUser.user?.sessionId.toString()
-            ).enqueue(object : Callback<MoviesResponse> {
-                override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                    swipeContainer.isRefreshing = false
-                }
-
-                override fun onResponse(
-                    call: Call<MoviesResponse>,
-                    response: Response<MoviesResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val list = response.body()?.getResults()
-                        adapter.movieList = list as List<Movie>
-                        adapter.notifyDataSetChanged()
-                    }
-                    swipeContainer.isRefreshing = false
-
-                }
-            })
-        } catch (e: Exception) {
-            Toast.makeText(activity, e.toString(), Toast.LENGTH_SHORT).show()
+            swipeContainer.isRefreshing = false
         }
     }
+
 }

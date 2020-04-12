@@ -1,10 +1,10 @@
-package com.example.iviapp
+package com.example.iviapp.pager
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 
-class   SlidePagerAdapter(
+class SlidePagerAdapter(
     fm: FragmentManager?,
     private val fragmentList: List<Fragment>
 ) :

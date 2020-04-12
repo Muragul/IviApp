@@ -17,19 +17,29 @@ import com.example.iviapp.R
 import com.example.iviapp.adapter.MoviesAdapter
 import com.example.iviapp.RetrofitService
 import com.example.iviapp.model.Movie
-import com.example.iviapp.model.MoviesResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.lang.Exception
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.collections.ArrayList
+import kotlin.coroutines.CoroutineContext
 
-class FirstFragment : Fragment() {
+class FirstFragment : Fragment(), CoroutineScope {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MoviesAdapter
     private lateinit var swipeContainer: SwipeRefreshLayout
     private lateinit var movieList: List<Movie>
+    private val job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,36 +73,22 @@ class FirstFragment : Fragment() {
         recyclerView.adapter = adapter
         adapter.notifyDataSetChanged()
 
-        loadJSON()
+        getMovieListCoroutine()
     }
 
-
-    private fun loadJSON() {
-        try {
-            if (BuildConfig.THE_MOVIE_DB_API_TOKEN.isEmpty()) {
-                return
+    private fun getMovieListCoroutine() {
+        launch {
+            swipeContainer.isRefreshing = true
+            val response = RetrofitService.getPostApi()
+                .getPopularMovieListCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN)
+            if (response.isSuccessful) {
+                val list = response.body()?.getResults()
+                adapter.movieList = list as List<Movie>
+                adapter.notifyDataSetChanged()
+            } else {
+                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
             }
-            RetrofitService.getPostApi().getPopularMovieList(BuildConfig.THE_MOVIE_DB_API_TOKEN)
-                .enqueue(object : Callback<MoviesResponse> {
-                    override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                        swipeContainer.isRefreshing = false
-                    }
-
-                    override fun onResponse(
-                        call: Call<MoviesResponse>,
-                        response: Response<MoviesResponse>
-                    ) {
-                        if (response.isSuccessful) {
-                            val list = response.body()?.getResults()
-                            adapter.movieList = list as List<Movie>
-                            adapter.notifyDataSetChanged()
-                        }
-                        swipeContainer.isRefreshing = false
-
-                    }
-                })
-        } catch (e: Exception) {
-            Toast.makeText(activity, e.toString(), Toast.LENGTH_SHORT).show()
+            swipeContainer.isRefreshing = false
         }
     }
 
