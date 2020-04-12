@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
 class ThirdFragment : Fragment(), CoroutineScope {
@@ -54,21 +55,25 @@ class ThirdFragment : Fragment(), CoroutineScope {
 
     fun logoutCoroutine(rootView: ViewGroup) {
         launch {
-            val body = JsonObject().apply {
-                addProperty("session_id", CurrentUser.user!!.sessionId)
-            }
-            val response = RetrofitService.getPostApi()
-                .deleteSessionCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, body)
-            if (response.isSuccessful) {
-                val savedUser: SharedPreferences = rootView.context.getSharedPreferences(
-                    "current_user",
-                    Context.MODE_PRIVATE
-                )
-                savedUser.edit().remove("current_user").apply()
-                val intent = Intent(rootView.context, MainActivity::class.java)
-                intent.flags =
-                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
+            try {
+                val body = JsonObject().apply {
+                    addProperty("session_id", CurrentUser.user!!.sessionId)
+                }
+                val response = RetrofitService.getPostApi()
+                    .deleteSessionCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, body)
+                if (response.isSuccessful) {
+                    val savedUser: SharedPreferences = rootView.context.getSharedPreferences(
+                        "current_user",
+                        Context.MODE_PRIVATE
+                    )
+                    savedUser.edit().remove("current_user").apply()
+                    val intent = Intent(rootView.context, MainActivity::class.java)
+                    intent.flags =
+                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                }
+            } catch (e: Exception) {
+
             }
         }
     }
