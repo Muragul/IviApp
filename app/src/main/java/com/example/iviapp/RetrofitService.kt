@@ -2,8 +2,7 @@ package com.example.iviapp
 
 import com.example.iviapp.model.MoviesResponse
 import com.google.gson.JsonObject
-
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
@@ -24,70 +23,69 @@ object RetrofitService {
 interface PostApi {
 
     @GET("movie/popular")
-    fun getPopularMovieList(
+    suspend fun getPopularMovieListCoroutine(
         @Query("api_key") apiKey: String
-    ): Call<MoviesResponse>
+    ): Response<MoviesResponse>
 
     @GET("movie/{movie_id}")
-    fun getMovie(
+    suspend fun getMovieCoroutine(
         @Path("movie_id") movieId: Int,
         @Query("api_key") apiKey: String
-    ): Call<JsonObject>
+    ): Response<JsonObject>
 
     @GET("account/{account_id}/favorite/movies")
-    fun getFavorites(
+    suspend fun getFavoritesCoroutine(
         @Path("account_id") id: Int,
         @Query("api_key") apiKey: String,
         @Query("session_id") sessionId: String
-    ): Call<MoviesResponse>
+    ): Response<MoviesResponse>
 
     @POST("account/{account_id}/favorite")
-    fun rate(
+    suspend fun rateCoroutine(
         @Path("account_id") accountId: Int?,
         @Query("api_key") apiKey: String,
         @Query("session_id") sessionId: String?,
         @Body body: JsonObject
-    ): Call<JsonObject>
+    ): Response<JsonObject>
 
     @GET("movie/{movie_id}/account_states")
-    fun hasLike(
+    suspend fun isFavoriteCoroutine(
         @Path("movie_id") movieId: Int?,
         @Query("api_key") apiKey: String,
         @Query("session_id") sessionId: String?
-    ): Call<JsonObject>
+    ): Response<JsonObject>
 
     @GET("authentication/token/new")
-    fun getToken(
+    suspend fun getTokenCoroutine(
         @Query("api_key") apiKey: String
-    ): Call<JsonObject>
+    ): Response<JsonObject>
 
     @POST("authentication/token/validate_with_login")
-    fun logIn(
+    suspend fun logInCoroutine(
         @Query("api_key") apiKey: String,
         @Body body: JsonObject
-    ): Call<JsonObject>
+    ): Response<JsonObject>
 
     @POST("authentication/session/new")
-    fun getSession(
+    suspend fun getSessionCoroutine(
         @Query("api_key") apiKey: String,
         @Body body: JsonObject
-    ): Call<JsonObject>
+    ): Response<JsonObject>
 
     @HTTP(
         method = "DELETE",
         path = "authentication/session",
         hasBody = true
     )
-    fun deleteSession(
+    suspend fun deleteSessionCoroutine(
         @Query("api_key") apiKey: String,
         @Body body: JsonObject
-    ): Call<JsonObject>
+    ): Response<JsonObject>
 
     @GET("account")
-    fun getAccount(
+    suspend fun getAccountCoroutine(
         @Query("api_key") apiKey: String,
         @Query("session_id") sessionId: String
-    ): Call<JsonObject>
-
+    ): Response<JsonObject>
 
 }

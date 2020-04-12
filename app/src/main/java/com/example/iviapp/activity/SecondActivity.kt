@@ -8,6 +8,8 @@ import com.example.iviapp.*
 import com.example.iviapp.fragment.FirstFragment
 import com.example.iviapp.fragment.SecondFragment
 import com.example.iviapp.fragment.ThirdFragment
+import com.example.iviapp.pager.LockableViewPager
+import com.example.iviapp.pager.SlidePagerAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 

@@ -14,11 +14,22 @@ import com.example.iviapp.RetrofitService
 import com.example.iviapp.model.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CoroutineScope {
+    private val job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         val loginButton: Button = findViewById(R.id.login_button)
 
         loginButton.setOnClickListener {
-            onLogIn(
+            onLogInCoroutine(
                 userLogin.text.toString(),
                 password.text.toString()
             )
@@ -45,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         userEditor.apply()
     }
 
-    fun loginSuccessful(user: AccountResponse, session: String) {
+    private fun loginSuccessful(user: AccountResponse, session: String) {
         CurrentUser.user = user
         CurrentUser.user!!.sessionId = session
         saveSession()
@@ -54,110 +65,76 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun getAccount(session: String?) {
-        var account: AccountResponse?
-        RetrofitService.getPostApi().getAccount(
-            BuildConfig.THE_MOVIE_DB_API_TOKEN,
-            session!!
-        ).enqueue(object : Callback<JsonObject> {
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+    private fun getAccountCoroutine(session: String?) {
+        launch {
+            val response = RetrofitService.getPostApi()
+                .getAccountCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, session!!)
+            if (response.isSuccessful) {
+                val account = Gson().fromJson(response.body(), AccountResponse::class.java)
+                if (account != null)
+                    loginSuccessful(account, session)
+            } else
                 noUserToast()
-            }
-
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                if (response.isSuccessful) {
-                    account = Gson().fromJson(
-                        response.body(),
-                        AccountResponse::class.java
-                    )
-                    if (account != null)
-                        loginSuccessful(account!!, session)
-                }
-            }
-
-        })
+        }
     }
 
-    fun getSession(body: JsonObject) {
-        var session: SessionResponse?
-        RetrofitService.getPostApi().getSession(BuildConfig.THE_MOVIE_DB_API_TOKEN, body)
-            .enqueue(object : Callback<JsonObject> {
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                    noUserToast()
-                }
 
-                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    if (response.isSuccessful) {
-                        session = Gson().fromJson(
-                            response.body(),
-                            SessionResponse::class.java
+    private fun getSessionCoroutine(body: JsonObject) {
+        launch {
+            val response = RetrofitService.getPostApi()
+                .getSessionCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, body)
+            if (response.isSuccessful) {
+                val session = Gson().fromJson(response.body(), SessionResponse::class.java)
+                if (session != null) {
+                    val sessionId = session.sessionId
+                    getAccountCoroutine(sessionId)
+                }
+            } else
+                noUserToast()
+        }
+    }
+
+    private fun getLoginResponseCoroutine(body: JsonObject) {
+        launch {
+            val response = RetrofitService.getPostApi()
+                .logInCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, body)
+            if (response.isSuccessful) {
+                val loginResponse = Gson().fromJson(response.body(), LoginResponse::class.java)
+                if (loginResponse != null) {
+                    val body = JsonObject().apply {
+                        addProperty(
+                            "request_token",
+                            loginResponse.requestToken.toString()
                         )
-                        if (session != null) {
-                            val sessionId = session!!.sessionId
-                            getAccount(sessionId)
-                        }
                     }
-
-                }
-
-            })
-    }
-
-    fun getLoginResponse(body: JsonObject) {
-        var loginResponse: LoginResponse?
-        RetrofitService.getPostApi().logIn(
-            BuildConfig.THE_MOVIE_DB_API_TOKEN,
-            body
-        ).enqueue(object : Callback<JsonObject> {
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-            }
-
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                if (response.isSuccessful) {
-                    loginResponse = Gson().fromJson(response.body(), LoginResponse::class.java)
-                    if (loginResponse != null) {
-                        val body = JsonObject().apply {
-                            addProperty(
-                                "request_token",
-                                loginResponse!!.requestToken.toString()
-                            )
-                        }
-                        getSession(body)
-                    }
-                } else {
+                    getSessionCoroutine(body)
+                } else
                     noUserToast()
-                }
             }
-        })
+        }
     }
 
-    private fun onLogIn(login: String, password: String) {
-        var token: Token?
-        RetrofitService.getPostApi().getToken(BuildConfig.THE_MOVIE_DB_API_TOKEN)
-            .enqueue(object : Callback<JsonObject> {
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                    noUserToast()
-                }
-
-                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    if (response.isSuccessful) {
-                        token = Gson().fromJson(response.body(), Token::class.java)
-                        if (token != null) {
-                            val request = token!!.requestToken
-                            val body = JsonObject().apply {
-                                addProperty("username", login)
-                                addProperty("password", password)
-                                addProperty("request_token", request)
-                            }
-                            getLoginResponse(body)
-                        }
+    private fun onLogInCoroutine(login: String, password: String) {
+        launch {
+            val response =
+                RetrofitService.getPostApi().getTokenCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN)
+            if (response.isSuccessful) {
+                val token = Gson().fromJson(response.body(), Token::class.java)
+                if (token != null) {
+                    val request = token.requestToken
+                    val body = JsonObject().apply {
+                        addProperty("username", login)
+                        addProperty("password", password)
+                        addProperty("request_token", request)
                     }
+                    getLoginResponseCoroutine(body)
                 }
-
-            })
+            } else
+                noUserToast()
+        }
     }
 
-    fun noUserToast() {
+    private fun noUserToast() {
         Toast.makeText(this@MainActivity, "No such user", Toast.LENGTH_SHORT).show()
     }
 

@@ -27,7 +27,7 @@ class MoviesAdapter(var context: Context, var movieList: List<Movie>) :
         viewHolder.bind(movieList[i])
     }
 
-    override fun getItemCount(): Int = movieList?.size
+    override fun getItemCount(): Int = movieList.size
 
     inner class MyViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         fun bind(post: Movie?) {
@@ -42,7 +42,7 @@ class MoviesAdapter(var context: Context, var movieList: List<Movie>) :
                 .into(thumbnail)
 
             view.setOnClickListener {
-                val intent= Intent(view.context, DetailActivity::class.java)
+                val intent = Intent(view.context, DetailActivity::class.java)
                 intent.putExtra("movie_id", post?.id)
                 view.context.startActivity(intent)
             }
