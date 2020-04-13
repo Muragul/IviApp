@@ -108,6 +108,22 @@ class FirstFragment : Fragment(), CoroutineScope {
                         if (!result.isNullOrEmpty()) {
                             movieDao?.insertAll(result as List<Movie>)
                         }
+
+
+                        val response1 = RetrofitService.getPostApi()
+                            .getFavoritesCoroutine(
+                                CurrentUser.user?.accountId!!,
+                                BuildConfig.THE_MOVIE_DB_API_TOKEN,
+                                CurrentUser.user?.sessionId.toString()
+                            )
+                        if (response1.isSuccessful) {
+                            val result = response1.body()?.getResults()
+                            if (!result.isNullOrEmpty()) {
+                                for (movie in result)
+                                    movie?.isFavorite = true
+                                movieDao?.insertAll(result as List<Movie>)
+                            }
+                        }
                         result
                     } else {
                         movieDao?.getAll() ?: emptyList()
