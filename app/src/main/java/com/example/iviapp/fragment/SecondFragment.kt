@@ -39,7 +39,6 @@ class SecondFragment : Fragment(), CoroutineScope {
         job.cancel()
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,7 +55,6 @@ class SecondFragment : Fragment(), CoroutineScope {
 
         movieDao = MovieDatabase.getDatabase(activity as Context).movieDao()
 
-
         recyclerView = rootView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         swipeContainer = rootView.findViewById(R.id.main_content)
@@ -66,7 +64,6 @@ class SecondFragment : Fragment(), CoroutineScope {
         initViews()
         return rootView
     }
-
 
     private fun initViews() {
         movieList = ArrayList()

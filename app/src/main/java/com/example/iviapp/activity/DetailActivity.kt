@@ -1,6 +1,5 @@
 package com.example.iviapp.activity
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -9,7 +8,6 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
 import com.example.iviapp.*
 import com.example.iviapp.model.CurrentUser
@@ -34,7 +32,7 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
     private var movieId: Int = 1
     private val job = Job()
 
-    companion object{
+    companion object {
         var needToSycn: Boolean = false
     }
 
@@ -151,7 +149,7 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
                 )
             } catch (e: Exception) {
                 val movie = movieDao?.getForDetail(movieId)
-                if (isFav){
+                if (isFav) {
                     movie?.isFavorite = false
                     isFav = false
                 } else {

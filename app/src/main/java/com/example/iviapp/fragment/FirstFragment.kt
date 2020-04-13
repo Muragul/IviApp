@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -16,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.iviapp.*
 import com.example.iviapp.activity.DetailActivity
-import com.example.iviapp.activity.SecondActivity
 import com.example.iviapp.adapter.MoviesAdapter
 import com.example.iviapp.model.CurrentUser
 import com.example.iviapp.model.Movie
@@ -38,7 +35,6 @@ class FirstFragment : Fragment(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -81,7 +77,6 @@ class FirstFragment : Fragment(), CoroutineScope {
 
         getMovieListCoroutine()
     }
-
 
     private fun getMovieListCoroutine() {
         launch {
