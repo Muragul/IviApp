@@ -13,9 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.iviapp.*
+import com.example.iviapp.activity.DetailActivity
 import com.example.iviapp.adapter.MoviesAdapter
 import com.example.iviapp.model.CurrentUser
 import com.example.iviapp.model.Movie
+import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
@@ -37,7 +39,6 @@ class SecondFragment : Fragment(), CoroutineScope {
         job.cancel()
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,7 +55,6 @@ class SecondFragment : Fragment(), CoroutineScope {
 
         movieDao = MovieDatabase.getDatabase(activity as Context).movieDao()
 
-
         recyclerView = rootView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         swipeContainer = rootView.findViewById(R.id.main_content)
@@ -64,7 +64,6 @@ class SecondFragment : Fragment(), CoroutineScope {
         initViews()
         return rootView
     }
-
 
     private fun initViews() {
         movieList = ArrayList()
@@ -82,6 +81,24 @@ class SecondFragment : Fragment(), CoroutineScope {
             swipeContainer.isRefreshing = true
             val list = withContext(Dispatchers.IO) {
                 try {
+                    if (DetailActivity.needToSycn) {
+                        val savedMovieList = movieDao?.getAll()
+                        if (savedMovieList != null)
+                            for (movie in savedMovieList) {
+                                val body = JsonObject().apply {
+                                    addProperty("media_type", "movie")
+                                    addProperty("media_id", movie.id)
+                                    addProperty("favorite", movie.isFavorite)
+                                }
+                                RetrofitService.getPostApi().rateCoroutine(
+                                    CurrentUser.user?.accountId,
+                                    BuildConfig.THE_MOVIE_DB_API_TOKEN,
+                                    CurrentUser.user?.sessionId,
+                                    body
+                                )
+                            }
+                        DetailActivity.needToSycn = false
+                    }
                     val response = RetrofitService.getPostApi()
                         .getFavoritesCoroutine(
                             CurrentUser.user?.accountId!!,

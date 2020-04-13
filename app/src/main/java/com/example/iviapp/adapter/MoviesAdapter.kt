@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.iviapp.activity.DetailActivity
 import com.example.iviapp.R
 import com.example.iviapp.model.Movie
@@ -34,16 +35,16 @@ class MoviesAdapter(var context: Context, var movieList: List<Movie>) :
             val title = view.findViewById<TextView>(R.id.title)
             val thumbnail = view.findViewById<ImageView>(R.id.thumbnail)
 
-
             title.text = post?.originalTitle
 
             Glide.with(context)
-                .load(post?.getPosterPath())
+                .load(post!!.getPosterPath())
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(thumbnail)
 
             view.setOnClickListener {
                 val intent = Intent(view.context, DetailActivity::class.java)
-                intent.putExtra("movie_id", post?.id)
+                intent.putExtra("movie_id", post.id)
                 view.context.startActivity(intent)
             }
         }

@@ -9,24 +9,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.example.iviapp.BuildConfig
-import com.example.iviapp.R
-import com.example.iviapp.RetrofitService
+import com.example.iviapp.*
 import com.example.iviapp.model.CurrentUser
 import com.example.iviapp.model.FavoriteResponse
 import com.example.iviapp.model.Movie
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
 class DetailActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var poster: ImageView
     private lateinit var movieTitle: TextView
-    lateinit var releaseDate: TextView
+    private lateinit var releaseDate: TextView
     lateinit var adult: TextView
     lateinit var rating: TextView
     lateinit var popularity: TextView
@@ -35,6 +31,12 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
     var isFav: Boolean = false
     private var movieId: Int = 1
     private val job = Job()
+
+    companion object {
+        var needToSycn: Boolean = false
+    }
+
+    private var movieDao: MovieDao? = null
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -47,6 +49,7 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
+
         poster = findViewById(R.id.poster)
         movieTitle = findViewById(R.id.title)
         releaseDate = findViewById(R.id.releasedate)
@@ -56,6 +59,8 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
         overview = findViewById(R.id.overview)
         val back: ImageButton = findViewById(R.id.back)
         save = findViewById(R.id.save)
+
+        movieDao = MovieDatabase.getDatabase(context = this).movieDao()
 
         if (Build.VERSION.SDK_INT < 16) {
             window.setFlags(
@@ -98,9 +103,12 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
             adult.text = "No"
         rating.text = movie.voteAverage.toString()
         popularity.text = movie.popularity.toString()
-        isFavoriteCoroutine()
+        isFav = movie.isFavorite
+        if (isFav)
+            save.setImageResource(R.drawable.ic_turned)
+        else
+            save.setImageResource(R.drawable.ic_turned_in)
     }
-
 
     private fun isFavoriteCoroutine() {
         launch {
@@ -127,27 +135,52 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
 
     private fun likeMovieCoroutine(isFavorite: Boolean) {
         launch {
-            val body = JsonObject().apply {
-                addProperty("media_type", "movie")
-                addProperty("media_id", movieId)
-                addProperty("favorite", isFavorite)
+            try {
+                val body = JsonObject().apply {
+                    addProperty("media_type", "movie")
+                    addProperty("media_id", movieId)
+                    addProperty("favorite", isFavorite)
+                }
+                RetrofitService.getPostApi().rateCoroutine(
+                    CurrentUser.user?.accountId,
+                    BuildConfig.THE_MOVIE_DB_API_TOKEN,
+                    CurrentUser.user?.sessionId,
+                    body
+                )
+            } catch (e: Exception) {
+                val movie = movieDao?.getForDetail(movieId)
+                if (isFav) {
+                    movie?.isFavorite = false
+                    isFav = false
+                } else {
+                    movie?.isFavorite = true
+                    isFav = true
+                }
+                movieDao?.insertForDetail(movie!!)
+                needToSycn = true
             }
-            RetrofitService.getPostApi().rateCoroutine(
-                CurrentUser.user?.accountId,
-                BuildConfig.THE_MOVIE_DB_API_TOKEN,
-                CurrentUser.user?.sessionId,
-                body
-            )
         }
     }
 
     private fun getMovieCoroutine() {
         launch {
-            val response = RetrofitService.getPostApi()
-                .getMovieCoroutine(movieId, BuildConfig.THE_MOVIE_DB_API_TOKEN)
-            if (response.isSuccessful) {
-                val movie: Movie = Gson().fromJson(response.body(), Movie::class.java)
-                fillViews(movie)
+            try {
+                val response = RetrofitService.getPostApi()
+                    .getMovieCoroutine(movieId, BuildConfig.THE_MOVIE_DB_API_TOKEN)
+                if (response.isSuccessful) {
+                    val result = Gson().fromJson(response.body(), Movie::class.java)
+                    fillViews(result)
+                    isFavoriteCoroutine()
+                    if (result == null) {
+                        movieDao?.insertForDetail(result as Movie)
+                    }
+                    result
+                } else {
+                    movieDao?.getForDetail(movieId)
+                }
+
+            } catch (e: Exception) {
+                fillViews(movieDao?.getForDetail(movieId)!!)
             }
         }
     }
