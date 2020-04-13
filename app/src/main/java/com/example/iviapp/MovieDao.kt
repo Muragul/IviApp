@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.iviapp.activity.DetailActivity
 import com.example.iviapp.model.Movie
 
 @Dao
@@ -17,4 +18,10 @@ interface MovieDao {
     @Query("SELECT * FROM movie_table WHERE isFavorite=1")
     fun getFavorite(): List<Movie>
 
+    // get data for Detail Activity
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertForDetail(detailList: Movie)
+
+    @Query("SELECT * FROM movie_table")
+    fun getForDetail(): Movie
 }
