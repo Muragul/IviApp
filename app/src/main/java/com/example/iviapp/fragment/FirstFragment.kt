@@ -108,8 +108,6 @@ class FirstFragment : Fragment(), CoroutineScope {
                         if (!result.isNullOrEmpty()) {
                             movieDao?.insertAll(result as List<Movie>)
                         }
-
-
                         val response1 = RetrofitService.getPostApi()
                             .getFavoritesCoroutine(
                                 CurrentUser.user?.accountId!!,
