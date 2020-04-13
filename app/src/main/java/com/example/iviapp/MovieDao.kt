@@ -20,8 +20,8 @@ interface MovieDao {
 
     // get data for Detail Activity
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertForDetail(detailList: Movie)
+    fun insertForDetail(movie: Movie)
 
-    @Query("SELECT * FROM movie_table")
-    fun getForDetail(): Movie
+    @Query("SELECT * FROM movie_table WHERE id = :id LIMIT 1")
+    fun getForDetail(id: Int): Movie
 }

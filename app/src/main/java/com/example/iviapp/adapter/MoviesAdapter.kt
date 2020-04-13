@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.iviapp.activity.DetailActivity
 import com.example.iviapp.R
 import com.example.iviapp.model.Movie
@@ -38,7 +39,9 @@ class MoviesAdapter(var context: Context, var movieList: List<Movie>) :
             title.text = post?.originalTitle
 
             Glide.with(context)
-                .load(post?.getPosterPath())
+                .load(post!!.getPosterPath())
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(thumbnail)
 
             view.setOnClickListener {
