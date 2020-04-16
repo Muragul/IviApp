@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -30,6 +31,7 @@ class SecondFragment : Fragment(), CoroutineScope {
     private lateinit var movieList: List<Movie>
     private val job = Job()
     private var movieDao: MovieDao? = null
+    private lateinit var progressBar: ProgressBar
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -54,7 +56,7 @@ class SecondFragment : Fragment(), CoroutineScope {
         toolbar.text = "Favorites"
 
         movieDao = MovieDatabase.getDatabase(activity as Context).movieDao()
-
+        progressBar = rootView.findViewById(R.id.progressBar)
         recyclerView = rootView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         swipeContainer = rootView.findViewById(R.id.main_content)
@@ -74,6 +76,7 @@ class SecondFragment : Fragment(), CoroutineScope {
         adapter.notifyDataSetChanged()
 
         getFavoritesCoroutine()
+        progressBar.visibility = View.GONE
     }
 
     private fun getFavoritesCoroutine() {

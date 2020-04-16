@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -30,7 +31,7 @@ class FirstFragment : Fragment(), CoroutineScope {
     private lateinit var swipeContainer: SwipeRefreshLayout
     private lateinit var movieList: List<Movie>
     private val job = Job()
-
+    private lateinit var progressBar: ProgressBar
     private var movieDao: MovieDao? = null
 
     override val coroutineContext: CoroutineContext
@@ -56,7 +57,7 @@ class FirstFragment : Fragment(), CoroutineScope {
         toolbar.text = "Popular"
 
         movieDao = MovieDatabase.getDatabase(activity as Context).movieDao()
-
+        progressBar = rootView.findViewById(R.id.progressBar)
         recyclerView = rootView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         swipeContainer = rootView.findViewById(R.id.main_content)
@@ -76,6 +77,7 @@ class FirstFragment : Fragment(), CoroutineScope {
         adapter.notifyDataSetChanged()
 
         getMovieListCoroutine()
+        progressBar.visibility = View.GONE
     }
 
     private fun getMovieListCoroutine() {
@@ -108,8 +110,6 @@ class FirstFragment : Fragment(), CoroutineScope {
                         if (!result.isNullOrEmpty()) {
                             movieDao?.insertAll(result as List<Movie>)
                         }
-
-
                         val response1 = RetrofitService.getPostApi()
                             .getFavoritesCoroutine(
                                 CurrentUser.user?.accountId!!,
