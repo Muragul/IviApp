@@ -4,10 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.iviapp.BuildConfig
@@ -33,6 +30,7 @@ class DetailActivity : AppCompatActivity() {
     lateinit var save: ImageButton
     var isFav: Boolean = false
     private var movieId: Int = 1
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +44,7 @@ class DetailActivity : AppCompatActivity() {
         overview = findViewById(R.id.overview)
         val back: ImageButton = findViewById(R.id.back)
         save = findViewById(R.id.save)
+        progressBar = findViewById(R.id.progressBar)
 
         if (Build.VERSION.SDK_INT < 16) {
             window.setFlags(
@@ -115,6 +114,7 @@ class DetailActivity : AppCompatActivity() {
         rating.text = movie.voteAverage.toString()
         popularity.text = movie.popularity.toString()
         hasLike()
+        progressBar.visibility = View.GONE
     }
 
 

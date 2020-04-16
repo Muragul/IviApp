@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -30,6 +31,7 @@ class FirstFragment : Fragment() {
     private lateinit var adapter: MoviesAdapter
     private lateinit var swipeContainer: SwipeRefreshLayout
     private lateinit var movieList: List<Movie>
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,7 +46,7 @@ class FirstFragment : Fragment() {
 
         val toolbar: TextView = rootView.findViewById(R.id.toolbar)
         toolbar.text = "Popular"
-
+        progressBar = rootView.findViewById(R.id.progressBar)
         recyclerView = rootView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         swipeContainer = rootView.findViewById(R.id.main_content)
@@ -64,6 +66,7 @@ class FirstFragment : Fragment() {
         adapter.notifyDataSetChanged()
 
         loadJSON()
+        progressBar.visibility = View.GONE
     }
 
 
