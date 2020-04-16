@@ -6,6 +6,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -30,6 +31,7 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
     lateinit var save: ImageButton
     var isFav: Boolean = false
     private var movieId: Int = 1
+    private lateinit var progressBar: ProgressBar
     private val job = Job()
 
     companion object {
@@ -59,6 +61,7 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
         overview = findViewById(R.id.overview)
         val back: ImageButton = findViewById(R.id.back)
         save = findViewById(R.id.save)
+        progressBar = findViewById(R.id.progressBar)
 
         movieDao = MovieDatabase.getDatabase(context = this).movieDao()
 
@@ -108,6 +111,7 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
             save.setImageResource(R.drawable.ic_turned)
         else
             save.setImageResource(R.drawable.ic_turned_in)
+        progressBar.visibility = View.GONE
     }
 
     private fun isFavoriteCoroutine() {
