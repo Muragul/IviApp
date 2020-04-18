@@ -1,6 +1,5 @@
 package com.example.iviapp.view.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,21 +41,22 @@ class FirstFragment : Fragment() {
                 container, false
             ) as ViewGroup
 
-        val toolbar: TextView = rootView.findViewById(R.id.toolbar)
-        toolbar.text = "Popular"
-        val viewModelProviderFactory = ViewModelProviderFactory(this.context!!)
-        movieListViewModel =
-            ViewModelProvider(this, viewModelProviderFactory).get(MovieListViewModel::class.java)
-
         progressBar = rootView.findViewById(R.id.progressBar)
         recyclerView = rootView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         swipeContainer = rootView.findViewById(R.id.main_content)
+        val toolbar: TextView = rootView.findViewById(R.id.toolbar)
+        toolbar.text = "Popular"
+
+        val viewModelProviderFactory = ViewModelProviderFactory(this.context!!)
+        movieListViewModel = ViewModelProvider(this, viewModelProviderFactory)
+            .get(MovieListViewModel::class.java)
 
         swipeContainer.setOnRefreshListener {
             initViews()
             movieListViewModel.getMovies()
         }
+
         movieListViewModel.getMovies()
         movieListViewModel.liveData.observe(this, Observer { result ->
             when (result) {

@@ -30,21 +30,20 @@ class MovieListViewModel(context: Context) : ViewModel(), CoroutineScope {
             val list = withContext(Dispatchers.IO) {
                 try {
                     if (DetailActivity.needToSycn) {
-                        val savedMovieList = movieDao?.getAll()
-                        if (savedMovieList != null)
-                            for (movie in savedMovieList) {
-                                val body = JsonObject().apply {
-                                    addProperty("media_type", "movie")
-                                    addProperty("media_id", movie.id)
-                                    addProperty("favorite", movie.isFavorite)
-                                }
-                                RetrofitService.getPostApi().rateCoroutine(
-                                    CurrentUser.user?.accountId,
-                                    BuildConfig.THE_MOVIE_DB_API_TOKEN,
-                                    CurrentUser.user?.sessionId,
-                                    body
-                                )
+                        val savedMovieList = movieDao.getAll()
+                        for (movie in savedMovieList) {
+                            val body = JsonObject().apply {
+                                addProperty("media_type", "movie")
+                                addProperty("media_id", movie.id)
+                                addProperty("favorite", movie.isFavorite)
                             }
+                            RetrofitService.getPostApi().rateCoroutine(
+                                CurrentUser.user?.accountId,
+                                BuildConfig.THE_MOVIE_DB_API_TOKEN,
+                                CurrentUser.user?.sessionId,
+                                body
+                            )
+                        }
                         DetailActivity.needToSycn = false
                     }
                     val response = RetrofitService.getPostApi()
@@ -52,7 +51,7 @@ class MovieListViewModel(context: Context) : ViewModel(), CoroutineScope {
                     if (response.isSuccessful) {
                         val result = response.body()?.getResults()
                         if (!result.isNullOrEmpty()) {
-                            movieDao?.insertAll(result as List<Movie>)
+                            movieDao.insertAll(result as List<Movie>)
                         }
                         val response1 = RetrofitService.getPostApi()
                             .getFavoritesCoroutine(
@@ -65,15 +64,63 @@ class MovieListViewModel(context: Context) : ViewModel(), CoroutineScope {
                             if (!result.isNullOrEmpty()) {
                                 for (movie in result)
                                     movie?.isFavorite = true
-                                movieDao?.insertAll(result as List<Movie>)
+                                movieDao.insertAll(result as List<Movie>)
                             }
                         }
                         result
                     } else {
-                        movieDao?.getAll() ?: emptyList()
+                        movieDao.getAll() ?: emptyList()
                     }
                 } catch (e: Exception) {
-                    movieDao?.getAll() ?: emptyList()
+                    movieDao.getAll() ?: emptyList()
+                }
+            }
+            liveData.value = State.HideLoading
+            liveData.value = State.Result(list as List<Movie>)
+        }
+    }
+
+    fun getFavorites() {
+        launch {
+            liveData.value = State.ShowLoading
+            val list = withContext(Dispatchers.IO) {
+                try {
+                    if (DetailActivity.needToSycn) {
+                        val savedMovieList = movieDao?.getAll()
+                        for (movie in savedMovieList) {
+                            val body = JsonObject().apply {
+                                addProperty("media_type", "movie")
+                                addProperty("media_id", movie.id)
+                                addProperty("favorite", movie.isFavorite)
+                            }
+                            RetrofitService.getPostApi().rateCoroutine(
+                                CurrentUser.user?.accountId,
+                                BuildConfig.THE_MOVIE_DB_API_TOKEN,
+                                CurrentUser.user?.sessionId,
+                                body
+                            )
+                        }
+                        DetailActivity.needToSycn = false
+                    }
+                    val response = RetrofitService.getPostApi()
+                        .getFavoritesCoroutine(
+                            CurrentUser.user?.accountId!!,
+                            BuildConfig.THE_MOVIE_DB_API_TOKEN,
+                            CurrentUser.user?.sessionId.toString()
+                        )
+                    if (response.isSuccessful) {
+                        val result = response.body()?.getResults()
+                        if (!result.isNullOrEmpty()) {
+                            for (movie in result)
+                                movie?.isFavorite = true
+                            movieDao?.insertAll(result as List<Movie>)
+                        }
+                        result
+                    } else {
+                        movieDao?.getFavorite() ?: emptyList()
+                    }
+                } catch (e: Exception) {
+                    movieDao?.getFavorite() ?: emptyList()
                 }
             }
             liveData.value = State.HideLoading
