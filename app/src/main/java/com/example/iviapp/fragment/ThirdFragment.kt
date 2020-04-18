@@ -46,7 +46,7 @@ class ThirdFragment : Fragment(), CoroutineScope {
             ) as ViewGroup
         val name: TextView = rootView.findViewById(R.id.name)
         val logoutBtn: Button = rootView.findViewById(R.id.logout)
-        name.text = CurrentUser.user!!.userName
+        name.text = CurrentUser.user.userName
         logoutBtn.setOnClickListener {
             logoutCoroutine(rootView)
         }
@@ -57,7 +57,7 @@ class ThirdFragment : Fragment(), CoroutineScope {
         launch {
             try {
                 val body = JsonObject().apply {
-                    addProperty("session_id", CurrentUser.user!!.sessionId)
+                    addProperty("session_id", CurrentUser.user.sessionId)
                 }
                 val response = RetrofitService.getPostApi()
                     .deleteSessionCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, body)

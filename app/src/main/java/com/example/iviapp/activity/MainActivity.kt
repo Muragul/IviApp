@@ -14,6 +14,7 @@ import com.example.iviapp.BuildConfig
 import com.example.iviapp.R
 import com.example.iviapp.RetrofitService
 import com.example.iviapp.model.*
+import com.example.iviapp.model.CurrentUser.Companion.user
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
@@ -54,24 +55,24 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         val savedUser: SharedPreferences =
             this.getSharedPreferences("current_user", Context.MODE_PRIVATE)
         val userEditor = savedUser.edit()
-        val user: String = Gson().toJson(CurrentUser.user)
+        val user: String = Gson().toJson(user)
         userEditor.putString("current_user", user)
         userEditor.apply()
     }
 
     private fun loginSuccessful(user: AccountResponse, session: String) {
         CurrentUser.user = user
-        CurrentUser.user!!.sessionId = session
+        CurrentUser.user.sessionId = session
         saveSession()
         val intent = Intent(this, SecondActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 
-    private fun getAccountCoroutine(session: String?) {
+    private fun getAccountCoroutine(session: String) {
         launch {
             val response = RetrofitService.getPostApi()
-                .getAccountCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, session!!)
+                .getAccountCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, session)
             if (response.isSuccessful) {
                 val account = Gson().fromJson(response.body(), AccountResponse::class.java)
                 if (account != null)
@@ -139,6 +140,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     private fun noUserToast() {
         Toast.makeText(this@MainActivity, "No such user", Toast.LENGTH_SHORT).show()
+        progressBar.visibility = View.GONE
     }
 
 }

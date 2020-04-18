@@ -38,11 +38,12 @@ class StartActivity : AppCompatActivity(), CoroutineScope {
         val savedUser: SharedPreferences =
             this.getSharedPreferences("current_user", Context.MODE_PRIVATE)
         val user = savedUser.getString("current_user", null)
-        val type: Type = object : TypeToken<AccountResponse>() {}.type
-        CurrentUser.user = Gson().fromJson<AccountResponse>(user, type)
-
-        if (CurrentUser.user != null && CurrentUser.user!!.sessionId != null)
-            getSavedAccountCoroutine(CurrentUser.user!!.sessionId.toString())
+        if (user != null){
+            val type: Type = object : TypeToken<AccountResponse>() {}.type
+            CurrentUser.user = Gson().fromJson(user, type)
+            if (CurrentUser.user.sessionId != null)
+                getSavedAccountCoroutine(CurrentUser.user.sessionId.toString())
+        }
         else {
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -61,7 +62,7 @@ class StartActivity : AppCompatActivity(), CoroutineScope {
 
     private fun loginSuccessful(user: AccountResponse, session: String) {
         CurrentUser.user = user
-        CurrentUser.user!!.sessionId = session
+        CurrentUser.user.sessionId = session
         saveSession()
         val intent = Intent(this, SecondActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -78,7 +79,6 @@ class StartActivity : AppCompatActivity(), CoroutineScope {
                     if (account != null)
                         loginSuccessful(account, session)
                     else {
-                        CurrentUser.user = null
                         val intent = Intent(this@StartActivity, MainActivity::class.java)
                         intent.flags =
                             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

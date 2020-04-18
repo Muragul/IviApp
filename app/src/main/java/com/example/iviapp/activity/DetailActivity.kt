@@ -29,7 +29,7 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
     lateinit var popularity: TextView
     lateinit var overview: TextView
     lateinit var save: ImageButton
-    var isFav: Boolean = false
+    private var isFavoriteMovie: Boolean = false
     private var movieId: Int = 1
     private lateinit var progressBar: ProgressBar
     private val job = Job()
@@ -84,17 +84,17 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
         }
 
         save.setOnClickListener {
-            if (isFav) {
+            if (isFavoriteMovie) {
                 Glide.with(this).load(R.drawable.ic_turned_in).into(save)
             } else {
                 Glide.with(this).load(R.drawable.ic_turned).into(save)
             }
-            likeMovieCoroutine(!isFav)
+            likeMovieCoroutine(!isFavoriteMovie)
         }
 
     }
 
-    private fun fillViews(movie: Movie) {
+    private fun fillMovieData(movie: Movie) {
         overview.text = movie.overview
         Glide.with(this@DetailActivity).load(movie.getBackdropPath())
             .into(poster)
@@ -106,8 +106,8 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
             adult.text = "No"
         rating.text = movie.voteAverage.toString()
         popularity.text = movie.popularity.toString()
-        isFav = movie.isFavorite
-        if (isFav)
+        isFavoriteMovie = movie.isFavorite
+        if (isFavoriteMovie)
             save.setImageResource(R.drawable.ic_turned)
         else
             save.setImageResource(R.drawable.ic_turned_in)
@@ -126,7 +126,7 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
                     response.body(),
                     FavoriteResponse::class.java
                 ).favorite
-                isFav = if (like) {
+                isFavoriteMovie = if (like) {
                     save.setImageResource(R.drawable.ic_turned)
                     true
                 } else {
@@ -153,12 +153,12 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
                 )
             } catch (e: Exception) {
                 val movie = movieDao?.getForDetail(movieId)
-                if (isFav) {
+                if (isFavoriteMovie) {
                     movie?.isFavorite = false
-                    isFav = false
+                    isFavoriteMovie = false
                 } else {
                     movie?.isFavorite = true
-                    isFav = true
+                    isFavoriteMovie = true
                 }
                 movieDao?.insertForDetail(movie!!)
                 needToSycn = true
@@ -173,7 +173,7 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
                     .getMovieCoroutine(movieId, BuildConfig.THE_MOVIE_DB_API_TOKEN)
                 if (response.isSuccessful) {
                     val result = Gson().fromJson(response.body(), Movie::class.java)
-                    fillViews(result)
+                    fillMovieData(result)
                     isFavoriteCoroutine()
                     if (result == null) {
                         movieDao?.insertForDetail(result as Movie)
@@ -184,7 +184,7 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
                 }
 
             } catch (e: Exception) {
-                fillViews(movieDao?.getForDetail(movieId)!!)
+                fillMovieData(movieDao?.getForDetail(movieId)!!)
             }
         }
     }

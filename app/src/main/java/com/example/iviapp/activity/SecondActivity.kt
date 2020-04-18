@@ -16,9 +16,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class SecondActivity : AppCompatActivity() {
     private lateinit var pager: LockableViewPager
     private lateinit var pagerAdapter: PagerAdapter
-    private var f1: Fragment = FirstFragment()
-    private var f2: Fragment = SecondFragment()
-    private var f3: Fragment = ThirdFragment()
+    private var mainPageFragment: Fragment = FirstFragment()
+    private var favoritePageFragment: Fragment = SecondFragment()
+    private var profileFragment: Fragment = ThirdFragment()
     private var list: MutableList<Fragment> = ArrayList()
     private lateinit var bottomNavigationView: BottomNavigationView
 
@@ -27,9 +27,9 @@ class SecondActivity : AppCompatActivity() {
         setContentView(R.layout.main_page)
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
-        list.add(f1)
-        list.add(f2)
-        list.add(f3)
+        list.add(mainPageFragment)
+        list.add(favoritePageFragment)
+        list.add(profileFragment)
         pager = findViewById(R.id.pager)
         pager.setSwipable(false)
         pagerAdapter = SlidePagerAdapter(supportFragmentManager, list)

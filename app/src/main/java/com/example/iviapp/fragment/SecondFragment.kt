@@ -94,9 +94,9 @@ class SecondFragment : Fragment(), CoroutineScope {
                                     addProperty("favorite", movie.isFavorite)
                                 }
                                 RetrofitService.getPostApi().rateCoroutine(
-                                    CurrentUser.user?.accountId,
+                                    CurrentUser.user.accountId,
                                     BuildConfig.THE_MOVIE_DB_API_TOKEN,
-                                    CurrentUser.user?.sessionId,
+                                    CurrentUser.user.sessionId,
                                     body
                                 )
                             }
@@ -104,9 +104,9 @@ class SecondFragment : Fragment(), CoroutineScope {
                     }
                     val response = RetrofitService.getPostApi()
                         .getFavoritesCoroutine(
-                            CurrentUser.user?.accountId!!,
+                            CurrentUser.user.accountId,
                             BuildConfig.THE_MOVIE_DB_API_TOKEN,
-                            CurrentUser.user?.sessionId.toString()
+                            CurrentUser.user.sessionId.toString()
                         )
                     if (response.isSuccessful) {
                         val result = response.body()?.getResults()

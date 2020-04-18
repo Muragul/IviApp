@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class AccountResponse (
     @SerializedName("id")
-    val accountId: Int? = null,
+    val accountId: Int,
 
     @SerializedName("name")
     val name: String? = null,

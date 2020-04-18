@@ -5,10 +5,10 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 
 class SlidePagerAdapter(
-    fm: FragmentManager?,
+    fragmentManager: FragmentManager,
     private val fragmentList: List<Fragment>
 ) :
-    FragmentPagerAdapter(fm!!) {
+    FragmentPagerAdapter(fragmentManager) {
     override fun getItem(position: Int): Fragment {
         return fragmentList[position]
     }
