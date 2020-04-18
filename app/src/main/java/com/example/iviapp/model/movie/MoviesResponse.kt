@@ -1,5 +1,6 @@
-package com.example.iviapp.model
+package com.example.iviapp.model.movie
 
+import com.example.iviapp.model.movie.Movie
 import com.google.gson.annotations.SerializedName
 
 class MoviesResponse {

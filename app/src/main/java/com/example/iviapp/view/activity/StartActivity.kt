@@ -7,9 +7,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.iviapp.BuildConfig
 import com.example.iviapp.R
-import com.example.iviapp.model.RetrofitService
-import com.example.iviapp.model.AccountResponse
-import com.example.iviapp.model.CurrentUser
+import com.example.iviapp.model.network.RetrofitService
+import com.example.iviapp.model.account.AccountResponse
+import com.example.iviapp.model.account.CurrentUser
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope

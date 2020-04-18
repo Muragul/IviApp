@@ -1,5 +1,6 @@
-package com.example.iviapp.model
+package com.example.iviapp.model.network
 
+import com.example.iviapp.model.movie.MoviesResponse
 import com.google.gson.JsonObject
 import retrofit2.Response
 import retrofit2.Retrofit

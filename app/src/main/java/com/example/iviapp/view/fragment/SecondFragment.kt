@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.iviapp.*
 import com.example.iviapp.view.adapter.MoviesAdapter
-import com.example.iviapp.model.Movie
+import com.example.iviapp.model.movie.Movie
 import com.example.iviapp.view_model.MovieListViewModel
 import com.example.iviapp.view_model.ViewModelProviderFactory
 

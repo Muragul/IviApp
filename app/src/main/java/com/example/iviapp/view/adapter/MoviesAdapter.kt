@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.iviapp.view.activity.DetailActivity
 import com.example.iviapp.R
-import com.example.iviapp.model.Movie
+import com.example.iviapp.model.movie.Movie
 
 
 class MoviesAdapter(var context: Context, var movieList: List<Movie>) :

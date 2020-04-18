@@ -1,4 +1,4 @@
-package com.example.iviapp.model
+package com.example.iviapp.model.movie
 
 import com.google.gson.annotations.SerializedName
 
@@ -12,9 +12,4 @@ data class FavoriteResponse
     val rated: Object,
     @SerializedName("watchlist")
     val watchlist: Boolean
-)
-
-data class RateClass(
-    @SerializedName("value")
-    val value: Int
 )

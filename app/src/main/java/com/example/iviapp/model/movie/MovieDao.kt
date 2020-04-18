@@ -1,9 +1,10 @@
-package com.example.iviapp.model
+package com.example.iviapp.model.movie
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.iviapp.model.movie.Movie
 
 @Dao
 interface MovieDao {

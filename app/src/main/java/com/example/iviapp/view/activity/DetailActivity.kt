@@ -13,7 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.iviapp.*
-import com.example.iviapp.model.Movie
+import com.example.iviapp.model.movie.Movie
 import com.example.iviapp.view_model.MovieDetailViewModel
 import com.example.iviapp.view_model.ViewModelProviderFactory
 

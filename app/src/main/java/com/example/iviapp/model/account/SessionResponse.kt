@@ -1,4 +1,4 @@
-package com.example.iviapp.model
+package com.example.iviapp.model.account
 
 import com.google.gson.annotations.SerializedName
 

@@ -4,7 +4,11 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.iviapp.BuildConfig
-import com.example.iviapp.model.*
+import com.example.iviapp.model.account.CurrentUser
+import com.example.iviapp.model.movie.Movie
+import com.example.iviapp.model.movie.MovieDao
+import com.example.iviapp.model.movie.MovieDatabase
+import com.example.iviapp.model.network.RetrofitService
 import com.example.iviapp.view.activity.DetailActivity
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*

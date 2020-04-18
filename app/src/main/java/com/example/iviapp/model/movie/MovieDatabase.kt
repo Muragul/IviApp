@@ -1,4 +1,4 @@
-package com.example.iviapp.model
+package com.example.iviapp.model.movie
 
 import android.content.Context
 import androidx.room.Database

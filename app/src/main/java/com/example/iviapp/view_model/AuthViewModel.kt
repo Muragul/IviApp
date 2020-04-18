@@ -1,15 +1,11 @@
 package com.example.iviapp.view_model
 
 import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import com.example.iviapp.BuildConfig
-import com.example.iviapp.model.AccountResponse
-import com.example.iviapp.model.CurrentUser
-import com.example.iviapp.model.RetrofitService
-import com.example.iviapp.view.activity.MainActivity
-import com.example.iviapp.view.activity.SecondActivity
+import com.example.iviapp.model.account.AccountResponse
+import com.example.iviapp.model.account.CurrentUser
+import com.example.iviapp.model.network.RetrofitService
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

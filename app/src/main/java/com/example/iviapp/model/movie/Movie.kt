@@ -1,4 +1,4 @@
-package com.example.iviapp.model
+package com.example.iviapp.model.movie
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
