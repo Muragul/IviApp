@@ -1,4 +1,4 @@
-package com.example.iviapp.adapter
+package com.example.iviapp.view.adapter
 
 import android.content.Context
 import android.content.Intent
@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.example.iviapp.activity.DetailActivity
+import com.example.iviapp.view.activity.DetailActivity
 import com.example.iviapp.R
 import com.example.iviapp.model.Movie
 

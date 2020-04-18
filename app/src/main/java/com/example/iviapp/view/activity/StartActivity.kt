@@ -1,4 +1,4 @@
-package com.example.iviapp.activity
+package com.example.iviapp.view.activity
 
 import android.content.Context
 import android.content.Intent
@@ -7,7 +7,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.iviapp.BuildConfig
 import com.example.iviapp.R
-import com.example.iviapp.RetrofitService
+import com.example.iviapp.model.RetrofitService
 import com.example.iviapp.model.AccountResponse
 import com.example.iviapp.model.CurrentUser
 import com.google.gson.Gson

@@ -1,88 +1,32 @@
-package com.example.iviapp.fragment
+package com.example.iviapp.view_model
 
 import android.content.Context
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.iviapp.*
-import com.example.iviapp.activity.DetailActivity
-import com.example.iviapp.adapter.MoviesAdapter
-import com.example.iviapp.model.CurrentUser
-import com.example.iviapp.model.Movie
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.example.iviapp.BuildConfig
+import com.example.iviapp.model.*
+import com.example.iviapp.view.activity.DetailActivity
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import java.lang.Exception
-import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
 
-class FirstFragment : Fragment(), CoroutineScope {
-
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: MoviesAdapter
-    private lateinit var swipeContainer: SwipeRefreshLayout
-    private lateinit var movieList: List<Movie>
+class MovieListViewModel(context: Context) : ViewModel(), CoroutineScope {
     private val job = Job()
-    private lateinit var progressBar: ProgressBar
-    private var movieDao: MovieDao? = null
+    val liveData = MutableLiveData<State>()
+    private val movieDao: MovieDao = MovieDatabase.getDatabase(context = context).movieDao()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onCleared() {
+        super.onCleared()
         job.cancel()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val rootView = inflater
-            .inflate(
-                R.layout.activity_second,
-                container, false
-            ) as ViewGroup
-
-        val toolbar: TextView = rootView.findViewById(R.id.toolbar)
-        toolbar.text = "Popular"
-
-        movieDao = MovieDatabase.getDatabase(activity as Context).movieDao()
-        progressBar = rootView.findViewById(R.id.progressBar)
-        recyclerView = rootView.findViewById(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        swipeContainer = rootView.findViewById(R.id.main_content)
-        swipeContainer.setOnRefreshListener {
-            initViews()
-        }
-        initViews()
-        return rootView
-    }
-
-    private fun initViews() {
-        movieList = ArrayList()
-        adapter = activity?.applicationContext?.let { MoviesAdapter(it, movieList) }!!
-        recyclerView.layoutManager = GridLayoutManager(activity, 2)
-        recyclerView.itemAnimator = DefaultItemAnimator()
-        recyclerView.adapter = adapter
-        adapter.notifyDataSetChanged()
-
-        getMovieListCoroutine()
-        progressBar.visibility = View.GONE
-    }
-
-    private fun getMovieListCoroutine() {
+    fun getMovies() {
         launch {
-            swipeContainer.isRefreshing = true
+            liveData.value = State.ShowLoading
             val list = withContext(Dispatchers.IO) {
                 try {
                     if (DetailActivity.needToSycn) {
@@ -132,10 +76,15 @@ class FirstFragment : Fragment(), CoroutineScope {
                     movieDao?.getAll() ?: emptyList()
                 }
             }
-            adapter.movieList = list as List<Movie>
-            adapter.notifyDataSetChanged()
-            swipeContainer.isRefreshing = false
+            liveData.value = State.HideLoading
+            liveData.value = State.Result(list as List<Movie>)
         }
+    }
+
+    sealed class State {
+        object ShowLoading : State()
+        object HideLoading : State()
+        data class Result(val list: List<Movie>) : State()
     }
 
 }

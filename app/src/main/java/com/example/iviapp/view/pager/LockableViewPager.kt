@@ -1,4 +1,4 @@
-package com.example.iviapp.pager
+package com.example.iviapp.view.pager
 
 import android.content.Context
 import android.util.AttributeSet

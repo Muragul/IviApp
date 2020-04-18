@@ -1,4 +1,4 @@
-package com.example.iviapp.fragment
+package com.example.iviapp.view.fragment
 
 import android.content.Context
 import android.content.Intent
@@ -12,8 +12,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.iviapp.BuildConfig
 import com.example.iviapp.R
-import com.example.iviapp.activity.MainActivity
-import com.example.iviapp.RetrofitService
+import com.example.iviapp.view.activity.MainActivity
+import com.example.iviapp.model.RetrofitService
 import com.example.iviapp.model.CurrentUser
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope

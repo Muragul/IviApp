@@ -1,4 +1,4 @@
-package com.example.iviapp.fragment
+package com.example.iviapp.view.fragment
 
 import android.content.Context
 import android.os.Bundle
@@ -14,10 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.iviapp.*
-import com.example.iviapp.activity.DetailActivity
-import com.example.iviapp.adapter.MoviesAdapter
+import com.example.iviapp.view.activity.DetailActivity
+import com.example.iviapp.view.adapter.MoviesAdapter
+import com.example.iviapp.model.MovieDao
+import com.example.iviapp.model.MovieDatabase
 import com.example.iviapp.model.CurrentUser
 import com.example.iviapp.model.Movie
+import com.example.iviapp.model.RetrofitService
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import java.lang.Exception

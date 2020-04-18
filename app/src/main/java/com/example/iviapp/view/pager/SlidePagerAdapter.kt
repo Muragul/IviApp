@@ -1,4 +1,4 @@
-package com.example.iviapp.pager
+package com.example.iviapp.view.pager
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

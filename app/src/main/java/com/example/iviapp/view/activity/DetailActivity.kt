@@ -1,4 +1,4 @@
-package com.example.iviapp.activity
+package com.example.iviapp.view.activity
 
 import android.os.Build
 import android.os.Bundle
@@ -11,9 +11,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.iviapp.*
+import com.example.iviapp.model.MovieDao
+import com.example.iviapp.model.MovieDatabase
 import com.example.iviapp.model.CurrentUser
 import com.example.iviapp.model.FavoriteResponse
 import com.example.iviapp.model.Movie
+import com.example.iviapp.model.RetrofitService
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*

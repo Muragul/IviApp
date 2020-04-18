@@ -11,10 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name= ".activity.MainActivity"/>
-        <activity android:name=".activity.SecondActivity" />
-        <activity android:name=".activity.DetailActivity" />
-        <activity android:name=".activity.StartActivity">
+        <activity android:name= "com.example.iviapp.view.activity.MainActivity"/>
+        <activity android:name="com.example.iviapp.view.activity.SecondActivity" />
+        <activity android:name="com.example.iviapp.view.activity.DetailActivity" />
+        <activity android:name="com.example.iviapp.view.activity.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,15 +1,15 @@
-package com.example.iviapp.activity
+package com.example.iviapp.view.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.PagerAdapter
 import com.example.iviapp.*
-import com.example.iviapp.fragment.FirstFragment
-import com.example.iviapp.fragment.SecondFragment
-import com.example.iviapp.fragment.ThirdFragment
-import com.example.iviapp.pager.LockableViewPager
-import com.example.iviapp.pager.SlidePagerAdapter
+import com.example.iviapp.view.fragment.FirstFragment
+import com.example.iviapp.view.fragment.SecondFragment
+import com.example.iviapp.view.fragment.ThirdFragment
+import com.example.iviapp.view.pager.LockableViewPager
+import com.example.iviapp.view.pager.SlidePagerAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
