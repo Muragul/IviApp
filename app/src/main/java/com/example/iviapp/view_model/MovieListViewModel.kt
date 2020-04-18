@@ -14,7 +14,7 @@ import kotlin.coroutines.CoroutineContext
 class MovieListViewModel(context: Context) : ViewModel(), CoroutineScope {
     private val job = Job()
     val liveData = MutableLiveData<State>()
-    private val movieDao: MovieDao = MovieDatabase.getDatabase(context = context).movieDao()
+    private val movieDao: MovieDao = MovieDatabase.getDatabase(context).movieDao()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -38,9 +38,9 @@ class MovieListViewModel(context: Context) : ViewModel(), CoroutineScope {
                                 addProperty("favorite", movie.isFavorite)
                             }
                             RetrofitService.getPostApi().rateCoroutine(
-                                CurrentUser.user?.accountId,
+                                CurrentUser.user.accountId,
                                 BuildConfig.THE_MOVIE_DB_API_TOKEN,
-                                CurrentUser.user?.sessionId,
+                                CurrentUser.user.sessionId,
                                 body
                             )
                         }
@@ -51,28 +51,28 @@ class MovieListViewModel(context: Context) : ViewModel(), CoroutineScope {
                     if (response.isSuccessful) {
                         val result = response.body()?.getResults()
                         if (!result.isNullOrEmpty()) {
-                            movieDao.insertAll(result as List<Movie>)
+                            movieDao.insertAll(result)
                         }
                         val response1 = RetrofitService.getPostApi()
                             .getFavoritesCoroutine(
-                                CurrentUser.user?.accountId!!,
+                                CurrentUser.user.accountId,
                                 BuildConfig.THE_MOVIE_DB_API_TOKEN,
-                                CurrentUser.user?.sessionId.toString()
+                                CurrentUser.user.sessionId.toString()
                             )
                         if (response1.isSuccessful) {
                             val result = response1.body()?.getResults()
                             if (!result.isNullOrEmpty()) {
                                 for (movie in result)
-                                    movie?.isFavorite = true
-                                movieDao.insertAll(result as List<Movie>)
+                                    movie.isFavorite = true
+                                movieDao.insertAll(result)
                             }
                         }
                         result
                     } else {
-                        movieDao.getAll() ?: emptyList()
+                        movieDao.getAll()
                     }
                 } catch (e: Exception) {
-                    movieDao.getAll() ?: emptyList()
+                    movieDao.getAll()
                 }
             }
             liveData.value = State.HideLoading
@@ -86,7 +86,7 @@ class MovieListViewModel(context: Context) : ViewModel(), CoroutineScope {
             val list = withContext(Dispatchers.IO) {
                 try {
                     if (DetailActivity.needToSycn) {
-                        val savedMovieList = movieDao?.getAll()
+                        val savedMovieList = movieDao.getAll()
                         for (movie in savedMovieList) {
                             val body = JsonObject().apply {
                                 addProperty("media_type", "movie")
@@ -94,9 +94,9 @@ class MovieListViewModel(context: Context) : ViewModel(), CoroutineScope {
                                 addProperty("favorite", movie.isFavorite)
                             }
                             RetrofitService.getPostApi().rateCoroutine(
-                                CurrentUser.user?.accountId,
+                                CurrentUser.user.accountId,
                                 BuildConfig.THE_MOVIE_DB_API_TOKEN,
-                                CurrentUser.user?.sessionId,
+                                CurrentUser.user.sessionId,
                                 body
                             )
                         }
@@ -104,23 +104,23 @@ class MovieListViewModel(context: Context) : ViewModel(), CoroutineScope {
                     }
                     val response = RetrofitService.getPostApi()
                         .getFavoritesCoroutine(
-                            CurrentUser.user?.accountId!!,
+                            CurrentUser.user.accountId,
                             BuildConfig.THE_MOVIE_DB_API_TOKEN,
-                            CurrentUser.user?.sessionId.toString()
+                            CurrentUser.user.sessionId.toString()
                         )
                     if (response.isSuccessful) {
                         val result = response.body()?.getResults()
                         if (!result.isNullOrEmpty()) {
                             for (movie in result)
-                                movie?.isFavorite = true
-                            movieDao?.insertAll(result as List<Movie>)
+                                movie.isFavorite = true
+                            movieDao.insertAll(result)
                         }
                         result
                     } else {
-                        movieDao?.getFavorite() ?: emptyList()
+                        movieDao.getFavorite()
                     }
                 } catch (e: Exception) {
-                    movieDao?.getFavorite() ?: emptyList()
+                    movieDao.getFavorite()
                 }
             }
             liveData.value = State.HideLoading

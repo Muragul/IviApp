@@ -1,5 +1,6 @@
 package com.example.iviapp.view.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -48,7 +49,7 @@ class FirstFragment : Fragment() {
         val toolbar: TextView = rootView.findViewById(R.id.toolbar)
         toolbar.text = "Popular"
 
-        val viewModelProviderFactory = ViewModelProviderFactory(this.context!!)
+        val viewModelProviderFactory = ViewModelProviderFactory(activity as Context)
         movieListViewModel = ViewModelProvider(this, viewModelProviderFactory)
             .get(MovieListViewModel::class.java)
 
@@ -58,6 +59,7 @@ class FirstFragment : Fragment() {
         }
 
         movieListViewModel.getMovies()
+        movieListViewModel.getFavorites()
         movieListViewModel.liveData.observe(this, Observer { result ->
             when (result) {
                 is MovieListViewModel.State.ShowLoading -> {

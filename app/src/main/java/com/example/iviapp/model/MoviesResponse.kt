@@ -7,7 +7,7 @@ class MoviesResponse {
     private val page = 0
 
     @SerializedName("results")
-    private val results: List<Movie>? = null
+    private lateinit var results: List<Movie>
 
     @SerializedName("total_results")
     private val totalResults = 0
@@ -15,7 +15,7 @@ class MoviesResponse {
     @SerializedName("total_pages")
     private val totalPages = 0
 
-    fun getResults(): List<Movie?>? {
+    fun getResults(): List<Movie> {
         return results
     }
 }

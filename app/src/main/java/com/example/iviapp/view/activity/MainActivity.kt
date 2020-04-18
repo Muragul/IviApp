@@ -61,17 +61,17 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     private fun loginSuccessful(user: AccountResponse, session: String) {
         CurrentUser.user = user
-        CurrentUser.user!!.sessionId = session
+        CurrentUser.user.sessionId = session
         saveSession()
         val intent = Intent(this, SecondActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 
-    private fun getAccountCoroutine(session: String?) {
+    private fun getAccountCoroutine(session: String) {
         launch {
             val response = RetrofitService.getPostApi()
-                .getAccountCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, session!!)
+                .getAccountCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, session)
             if (response.isSuccessful) {
                 val account = Gson().fromJson(response.body(), AccountResponse::class.java)
                 if (account != null)
@@ -139,6 +139,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     private fun noUserToast() {
         Toast.makeText(this@MainActivity, "No such user", Toast.LENGTH_SHORT).show()
+        progressBar.visibility = View.GONE
     }
 
 }
