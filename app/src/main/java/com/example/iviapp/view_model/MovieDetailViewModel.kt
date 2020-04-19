@@ -36,7 +36,7 @@ class MovieDetailViewModel(context: Context) : ViewModel(), CoroutineScope {
     fun getMovie(movieId: Int) {
         launch {
             liveData.value = State.ShowLoading
-            var movie: Movie
+            val movie: Movie
             movie = try {
                 val response = RetrofitService.getPostApi()
                     .getMovieCoroutine(movieId, BuildConfig.THE_MOVIE_DB_API_TOKEN)
