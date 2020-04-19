@@ -77,7 +77,7 @@ class DetailActivity : AppCompatActivity() {
                     progressBar.visibility = View.GONE
                 }
                 is MovieDetailViewModel.State.Result -> {
-                    fillViews(result.movie)
+                    fillMovieData(result.movie)
                 }
                 is MovieDetailViewModel.State.IsFavorite -> {
                     isFavoriteMovie = result.isFavorite
@@ -97,17 +97,19 @@ class DetailActivity : AppCompatActivity() {
         save.setOnClickListener {
             if (isFavoriteMovie) {
                 Glide.with(this).load(R.drawable.ic_turned_in).into(save)
+                isFavoriteMovie = false
             } else {
                 Glide.with(this).load(R.drawable.ic_turned).into(save)
+                isFavoriteMovie = true
             }
-            movieDetailViewModel.likeMovie(!isFavoriteMovie, movieId)
+            movieDetailViewModel.likeMovie(isFavoriteMovie, movieId)
         }
 
     }
 
-    private fun fillViews(movie: Movie) {
+    private fun fillMovieData(movie: Movie) {
         overview.text = movie.overview
-        Glide.with(this@DetailActivity).load(movie.getBackdropPath())
+        Glide.with(this@DetailActivity).load(movie.getPosterPath())
             .into(poster)
         movieTitle.text = movie.originalTitle
         releaseDate.text = movie.releaseDate

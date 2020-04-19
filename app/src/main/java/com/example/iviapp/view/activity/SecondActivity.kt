@@ -18,7 +18,7 @@ class SecondActivity : AppCompatActivity() {
     private var mainPageFragment: Fragment = FirstFragment()
     private var favoritePageFragment: Fragment = SecondFragment()
     private var profileFragment: Fragment = ThirdFragment()
-    private var list: MutableList<Fragment> = ArrayList()
+    private var fragmentList: MutableList<Fragment> = ArrayList()
     private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,12 +26,12 @@ class SecondActivity : AppCompatActivity() {
         setContentView(R.layout.main_page)
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
-        list.add(mainPageFragment)
-        list.add(favoritePageFragment)
-        list.add(profileFragment)
+        fragmentList.add(mainPageFragment)
+        fragmentList.add(favoritePageFragment)
+        fragmentList.add(profileFragment)
         pager = findViewById(R.id.pager)
         pager.setSwipable(false)
-        pagerAdapter = SlidePagerAdapter(supportFragmentManager, list)
+        pagerAdapter = SlidePagerAdapter(supportFragmentManager, fragmentList)
         pager.adapter = pagerAdapter
 
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
