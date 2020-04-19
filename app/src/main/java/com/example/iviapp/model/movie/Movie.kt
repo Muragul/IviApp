@@ -35,7 +35,7 @@ data class Movie(
     @SerializedName("vote_average")
     var voteAverage: Double,
     var isFavorite: Boolean
-) :Serializable {
+) : Serializable {
 
     fun getPosterPath(): String {
         return "https://image.tmdb.org/t/p/w500$posterPath"

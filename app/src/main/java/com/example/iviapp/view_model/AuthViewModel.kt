@@ -49,7 +49,7 @@ class AuthViewModel(context: Context) : ViewModel(), CoroutineScope {
         }
     }
 
-    fun getLoginResponse(body: JsonObject) {
+    private fun getLoginResponse(body: JsonObject) {
         launch {
             val response = RetrofitService.getPostApi()
                 .logInCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, body)
@@ -70,7 +70,7 @@ class AuthViewModel(context: Context) : ViewModel(), CoroutineScope {
         }
     }
 
-    fun getSession(body: JsonObject) {
+    private fun getSession(body: JsonObject) {
         launch {
             val response = RetrofitService.getPostApi()
                 .getSessionCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, body)

@@ -12,7 +12,6 @@ import com.example.iviapp.view.pager.LockableViewPager
 import com.example.iviapp.view.pager.SlidePagerAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-
 class SecondActivity : AppCompatActivity() {
     private lateinit var pager: LockableViewPager
     private lateinit var pagerAdapter: PagerAdapter

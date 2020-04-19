@@ -2,8 +2,7 @@ package com.example.iviapp.model.movie
 
 import com.google.gson.annotations.SerializedName
 
-data class FavoriteResponse
-    (
+data class FavoriteResponse(
     @SerializedName("id")
     val id: Int,
     @SerializedName("favorite")

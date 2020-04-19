@@ -37,19 +37,19 @@ class MovieDetailViewModel(context: Context) : ViewModel(), CoroutineScope {
         launch {
             liveData.value = State.ShowLoading
             var movie: Movie
-            try {
+            movie = try {
                 val response = RetrofitService.getPostApi()
                     .getMovieCoroutine(movieId, BuildConfig.THE_MOVIE_DB_API_TOKEN)
                 if (response.isSuccessful) {
                     val result = Gson().fromJson(response.body(), Movie::class.java)
-                    movie = result
+                    result
                 } else {
                     movieDao.getForDetail(movieId)
-                    movie = movieDao.getForDetail(movieId)
+                    movieDao.getForDetail(movieId)
                 }
             } catch (e: Exception) {
                 movieDao.getForDetail(movieId)
-                movie = movieDao.getForDetail(movieId)
+                movieDao.getForDetail(movieId)
             }
             liveData.value = State.HideLoading
             liveData.value = State.Result(movie)
@@ -103,7 +103,6 @@ class MovieDetailViewModel(context: Context) : ViewModel(), CoroutineScope {
             }
         }
     }
-
 
     sealed class State {
         object ShowLoading : State()

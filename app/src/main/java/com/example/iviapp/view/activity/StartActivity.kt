@@ -59,6 +59,10 @@ class StartActivity : AppCompatActivity() {
             CurrentUser.user = Gson().fromJson(user, type)
             if (CurrentUser.user.sessionId != null)
                 authViewModel.getAccount(CurrentUser.user.sessionId.toString())
+        } else {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         }
     }
 

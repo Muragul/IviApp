@@ -2,7 +2,7 @@ package com.example.iviapp.model.account
 
 import com.google.gson.annotations.SerializedName
 
-data class AccountResponse (
+data class AccountResponse(
     @SerializedName("id")
     val accountId: Int,
 

@@ -2,7 +2,7 @@ package com.example.iviapp.model.account
 
 import com.google.gson.annotations.SerializedName
 
-data class Token (
+data class Token(
     @SerializedName("success")
     val isSuccess: Boolean? = null,
 

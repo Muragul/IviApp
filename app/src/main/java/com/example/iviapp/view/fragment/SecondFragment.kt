@@ -1,5 +1,6 @@
 package com.example.iviapp.view.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +30,11 @@ class SecondFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var movieListViewModel: MovieListViewModel
 
+    override fun onResume() {
+        super.onResume()
+        movieListViewModel.getFavorites()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,7 +53,7 @@ class SecondFragment : Fragment() {
         val toolbar: TextView = rootView.findViewById(R.id.toolbar)
         toolbar.text = "Favorites"
 
-        val viewModelProviderFactory = ViewModelProviderFactory(this.context!!)
+        val viewModelProviderFactory = ViewModelProviderFactory(activity as Context)
         movieListViewModel = ViewModelProvider(this, viewModelProviderFactory)
             .get(MovieListViewModel::class.java)
 
@@ -84,6 +90,5 @@ class SecondFragment : Fragment() {
         adapter.notifyDataSetChanged()
         progressBar.visibility = View.GONE
     }
-
 
 }

@@ -14,7 +14,6 @@ import com.example.iviapp.view.activity.DetailActivity
 import com.example.iviapp.R
 import com.example.iviapp.model.movie.Movie
 
-
 class MoviesAdapter(var context: Context, var movieList: List<Movie>) :
     RecyclerView.Adapter<MoviesAdapter.MyViewHolder>() {
 
