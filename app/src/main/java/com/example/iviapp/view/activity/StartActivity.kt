@@ -57,8 +57,12 @@ class StartActivity : AppCompatActivity() {
         if (user != null) {
             val type: Type = object : TypeToken<AccountResponse>() {}.type
             CurrentUser.user = Gson().fromJson(user, type)
-            if (CurrentUser.user.sessionId != null)
+            if (CurrentUser.user.sessionId != null) {
                 authViewModel.getAccount(CurrentUser.user.sessionId.toString())
+                val intent = Intent(this, SecondActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
         } else {
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -79,9 +83,6 @@ class StartActivity : AppCompatActivity() {
         CurrentUser.user = user
         CurrentUser.user.sessionId = session
         saveSession()
-        val intent = Intent(this, SecondActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
     }
 
 }
