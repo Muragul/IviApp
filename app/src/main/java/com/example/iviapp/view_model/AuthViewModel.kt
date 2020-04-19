@@ -113,7 +113,6 @@ class AuthViewModel(context: Context) : ViewModel(), CoroutineScope {
                     liveData.value = State.Result(false)
                 }
             } catch (e: Exception) {
-                liveData.value = State.Result(false)
             } finally {
                 liveData.value = State.HideLoading
             }
