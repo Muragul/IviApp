@@ -59,7 +59,7 @@ class FirstFragment : Fragment() {
         }
 
         movieListViewModel.getMovies()
-        movieListViewModel.getFavorites()
+//        movieListViewModel.getFavorites()
         movieListViewModel.liveData.observe(this, Observer { result ->
             when (result) {
                 is MovieListViewModel.State.ShowLoading -> {
