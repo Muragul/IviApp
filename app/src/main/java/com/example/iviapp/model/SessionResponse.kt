@@ -7,5 +7,5 @@ data class SessionResponse (
     val isSuccess: Boolean? = null,
 
     @SerializedName("session_id")
-    val sessionId: String? = null
+    val sessionId: String
 )

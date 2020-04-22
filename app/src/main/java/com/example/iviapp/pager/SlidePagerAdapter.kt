@@ -1,14 +1,14 @@
-package com.example.iviapp
+package com.example.iviapp.pager
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 
-class   SlidePagerAdapter(
-    fm: FragmentManager?,
+class SlidePagerAdapter(
+    fragmentManager: FragmentManager,
     private val fragmentList: List<Fragment>
 ) :
-    FragmentPagerAdapter(fm!!) {
+    FragmentPagerAdapter(fragmentManager) {
     override fun getItem(position: Int): Fragment {
         return fragmentList[position]
     }

@@ -11,14 +11,25 @@ import com.example.iviapp.RetrofitService
 import com.example.iviapp.model.AccountResponse
 import com.example.iviapp.model.CurrentUser
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.lang.reflect.Type
+import kotlin.coroutines.CoroutineContext
 
-class StartActivity : AppCompatActivity() {
+class StartActivity : AppCompatActivity(), CoroutineScope {
+    private val job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,11 +38,12 @@ class StartActivity : AppCompatActivity() {
         val savedUser: SharedPreferences =
             this.getSharedPreferences("current_user", Context.MODE_PRIVATE)
         val user = savedUser.getString("current_user", null)
-        val type: Type = object : TypeToken<AccountResponse>() {}.type
-        CurrentUser.user = Gson().fromJson<AccountResponse>(user, type)
-
-        if (CurrentUser.user != null && CurrentUser.user!!.sessionId != null)
-            getSavedAccount(CurrentUser.user!!.sessionId.toString())
+        if (user != null){
+            val type: Type = object : TypeToken<AccountResponse>() {}.type
+            CurrentUser.user = Gson().fromJson(user, type)
+            if (CurrentUser.user.sessionId != null)
+                getSavedAccountCoroutine(CurrentUser.user.sessionId.toString())
+        }
         else {
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -48,46 +60,38 @@ class StartActivity : AppCompatActivity() {
         userEditor.apply()
     }
 
-    fun loginSuccessful(user: AccountResponse, session: String) {
+    private fun loginSuccessful(user: AccountResponse, session: String) {
         CurrentUser.user = user
-        CurrentUser.user!!.sessionId = session
+        CurrentUser.user.sessionId = session
         saveSession()
         val intent = Intent(this, SecondActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 
-    private fun getSavedAccount(session: String) {
-        var account: AccountResponse?
-        RetrofitService.getPostApi().getAccount(
-            BuildConfig.THE_MOVIE_DB_API_TOKEN,
-            session
-        ).enqueue(object : Callback<JsonObject> {
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-            }
-
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+    private fun getSavedAccountCoroutine(session: String) {
+        launch {
+            try {
+                val response = RetrofitService.getPostApi()
+                    .getAccountCoroutine(BuildConfig.THE_MOVIE_DB_API_TOKEN, session)
                 if (response.isSuccessful) {
-                    account = Gson().fromJson(
-                        response.body(),
-                        AccountResponse::class.java
-                    )
+                    val account = Gson().fromJson(response.body(), AccountResponse::class.java)
                     if (account != null)
-                        loginSuccessful(account!!, session)
+                        loginSuccessful(account, session)
                     else {
-                        CurrentUser.user = null
-                        val intent = Intent(
-                            this@StartActivity,
-                            MainActivity::class.java
-                        )
+                        val intent = Intent(this@StartActivity, MainActivity::class.java)
                         intent.flags =
                             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                     }
                 }
+            } catch (e: Exception) {
+                val intent = Intent(this@StartActivity, SecondActivity::class.java)
+                intent.flags =
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
             }
-
-        })
+        }
     }
 
 }

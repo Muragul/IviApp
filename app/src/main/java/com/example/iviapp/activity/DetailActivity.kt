@@ -4,37 +4,54 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.example.iviapp.BuildConfig
-import com.example.iviapp.R
-import com.example.iviapp.RetrofitService
+import com.example.iviapp.*
 import com.example.iviapp.model.CurrentUser
 import com.example.iviapp.model.FavoriteResponse
 import com.example.iviapp.model.Movie
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.*
+import java.lang.Exception
+import kotlin.coroutines.CoroutineContext
 
-class DetailActivity : AppCompatActivity() {
-    lateinit var poster: ImageView
-    lateinit var movieTitle: TextView
-    lateinit var releaseDate: TextView
+class DetailActivity : AppCompatActivity(), CoroutineScope {
+    private lateinit var poster: ImageView
+    private lateinit var movieTitle: TextView
+    private lateinit var releaseDate: TextView
     lateinit var adult: TextView
     lateinit var rating: TextView
     lateinit var popularity: TextView
     lateinit var overview: TextView
     lateinit var save: ImageButton
-    var isFav: Boolean = false
+    private var isFavoriteMovie: Boolean = false
     private var movieId: Int = 1
     private lateinit var progressBar: ProgressBar
+    private val job = Job()
 
+    companion object {
+        var needToSycn: Boolean = false
+    }
+
+    private var movieDao: MovieDao? = null
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
+  
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
+
         poster = findViewById(R.id.poster)
         movieTitle = findViewById(R.id.title)
         releaseDate = findViewById(R.id.releasedate)
@@ -45,6 +62,8 @@ class DetailActivity : AppCompatActivity() {
         val back: ImageButton = findViewById(R.id.back)
         save = findViewById(R.id.save)
         progressBar = findViewById(R.id.progressBar)
+        movieDao = MovieDatabase.getDatabase(context = this).movieDao()
+
 
         if (Build.VERSION.SDK_INT < 16) {
             window.setFlags(
@@ -58,50 +77,24 @@ class DetailActivity : AppCompatActivity() {
         }
 
         movieId = intent.getIntExtra("movie_id", 1)
-
-        RetrofitService.getPostApi().getMovie(
-            movieId,
-            BuildConfig.THE_MOVIE_DB_API_TOKEN
-        )
-            .enqueue(object : Callback<JsonObject> {
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                    Toast.makeText(
-                        this@DetailActivity,
-                        "Can not find",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                    onBackPressed()
-                }
-
-                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    if (response.isSuccessful) {
-                        val movie: Movie = Gson().fromJson(
-                            response.body(),
-                            Movie::class.java
-                        )
-                        fillViews(movie)
-                    }
-                }
-
-            })
+        getMovieCoroutine()
 
         back.setOnClickListener {
             onBackPressed()
         }
 
         save.setOnClickListener {
-            if (isFav) {
+            if (isFavoriteMovie) {
                 Glide.with(this).load(R.drawable.ic_turned_in).into(save)
             } else {
                 Glide.with(this).load(R.drawable.ic_turned).into(save)
             }
-            likeMovie(!isFav)
+            likeMovieCoroutine(!isFavoriteMovie)
         }
 
     }
 
-    fun fillViews(movie: Movie) {
+    private fun fillMovieData(movie: Movie) {
         overview.text = movie.overview
         Glide.with(this@DetailActivity).load(movie.getBackdropPath())
             .into(poster)
@@ -113,66 +106,87 @@ class DetailActivity : AppCompatActivity() {
             adult.text = "No"
         rating.text = movie.voteAverage.toString()
         popularity.text = movie.popularity.toString()
-        hasLike()
+        isFavoriteMovie = movie.isFavorite
+        if (isFavoriteMovie)
+            save.setImageResource(R.drawable.ic_turned)
+        else
+            save.setImageResource(R.drawable.ic_turned_in)
         progressBar.visibility = View.GONE
     }
 
-
-    private fun hasLike() {
-        RetrofitService.getPostApi()
-            .hasLike(movieId, BuildConfig.THE_MOVIE_DB_API_TOKEN, CurrentUser.user?.sessionId)
-            .enqueue(object : Callback<JsonObject> {
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                }
-
-                override fun onResponse(
-                    call: Call<JsonObject>,
-                    response: Response<JsonObject>
-                ) {
-                    if (response.isSuccessful) {
-                        var like = Gson().fromJson(
-                            response.body(),
-                            FavoriteResponse::class.java
-                        ).favorite
-                        isFav = if (like) {
-                            save.setImageResource(R.drawable.ic_turned)
-                            true
-                        } else {
-                            save.setImageResource(R.drawable.ic_turned_in)
-                            false
-                        }
-                    }
-
-                }
-            })
-
-    }
-
-    private fun likeMovie(favourite: Boolean) {
-        val body = JsonObject().apply {
-            addProperty("media_type", "movie")
-            addProperty("media_id", movieId)
-            addProperty("favorite", favourite)
-        }
-
-        RetrofitService.getPostApi()
-            .rate(
-                CurrentUser.user?.accountId,
+    private fun isFavoriteCoroutine() {
+        launch {
+            val response = RetrofitService.getPostApi().isFavoriteCoroutine(
+                movieId,
                 BuildConfig.THE_MOVIE_DB_API_TOKEN,
-                CurrentUser.user?.sessionId,
-                body
+                CurrentUser.user?.sessionId
             )
-            .enqueue(object : Callback<JsonObject> {
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            if (response.isSuccessful) {
+                val like = Gson().fromJson(
+                    response.body(),
+                    FavoriteResponse::class.java
+                ).favorite
+                isFavoriteMovie = if (like) {
+                    save.setImageResource(R.drawable.ic_turned)
+                    true
+                } else {
+                    save.setImageResource(R.drawable.ic_turned_in)
+                    false
                 }
-
-                override fun onResponse(
-                    call: Call<JsonObject>,
-                    response: Response<JsonObject>
-                ) {
-                }
-            })
+            }
+        }
     }
 
+    private fun likeMovieCoroutine(isFavorite: Boolean) {
+        launch {
+            try {
+                val body = JsonObject().apply {
+                    addProperty("media_type", "movie")
+                    addProperty("media_id", movieId)
+                    addProperty("favorite", isFavorite)
+                }
+                RetrofitService.getPostApi().rateCoroutine(
+                    CurrentUser.user?.accountId,
+                    BuildConfig.THE_MOVIE_DB_API_TOKEN,
+                    CurrentUser.user?.sessionId,
+                    body
+                )
+            } catch (e: Exception) {
+                val movie = movieDao?.getForDetail(movieId)
+                if (isFavoriteMovie) {
+                    movie?.isFavorite = false
+                    isFavoriteMovie = false
+                } else {
+                    movie?.isFavorite = true
+                    isFavoriteMovie = true
+                }
+                movieDao?.insertForDetail(movie!!)
+                needToSycn = true
+            }
+        }
+    }
+
+    private fun getMovieCoroutine() {
+        launch {
+            try {
+                val response = RetrofitService.getPostApi()
+                    .getMovieCoroutine(movieId, BuildConfig.THE_MOVIE_DB_API_TOKEN)
+                if (response.isSuccessful) {
+                    val result = Gson().fromJson(response.body(), Movie::class.java)
+                    fillMovieData(result)
+                    isFavoriteCoroutine()
+                    if (result == null) {
+                        movieDao?.insertForDetail(result as Movie)
+                    }
+                    result
+                } else {
+                    movieDao?.getForDetail(movieId)
+                }
+
+            } catch (e: Exception) {
+                fillMovieData(movieDao?.getForDetail(movieId)!!)
+            }
+        }
+    }
 
 }
