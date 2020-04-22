@@ -19,7 +19,7 @@
         app:itemIconTint="@drawable/selector"
         app:itemTextColor="@color/white"/>
 
-    <com.example.iviapp.pager.LockableViewPager
+  <com.example.iviapp.pager.LockableViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

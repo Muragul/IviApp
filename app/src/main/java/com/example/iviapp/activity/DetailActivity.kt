@@ -47,7 +47,7 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
         super.onDestroy()
         job.cancel()
     }
-
+  
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -62,8 +62,8 @@ class DetailActivity : AppCompatActivity(), CoroutineScope {
         val back: ImageButton = findViewById(R.id.back)
         save = findViewById(R.id.save)
         progressBar = findViewById(R.id.progressBar)
-
         movieDao = MovieDatabase.getDatabase(context = this).movieDao()
+
 
         if (Build.VERSION.SDK_INT < 16) {
             window.setFlags(

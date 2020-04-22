@@ -54,7 +54,6 @@ class SecondFragment : Fragment(), CoroutineScope {
 
         val toolbar: TextView = rootView.findViewById(R.id.toolbar)
         toolbar.text = "Favorites"
-
         movieDao = MovieDatabase.getDatabase(activity as Context).movieDao()
         progressBar = rootView.findViewById(R.id.progressBar)
         recyclerView = rootView.findViewById(R.id.recycler_view)

@@ -55,7 +55,6 @@ class FirstFragment : Fragment(), CoroutineScope {
 
         val toolbar: TextView = rootView.findViewById(R.id.toolbar)
         toolbar.text = "Popular"
-
         movieDao = MovieDatabase.getDatabase(activity as Context).movieDao()
         progressBar = rootView.findViewById(R.id.progressBar)
         recyclerView = rootView.findViewById(R.id.recycler_view)
@@ -77,6 +76,7 @@ class FirstFragment : Fragment(), CoroutineScope {
         adapter.notifyDataSetChanged()
 
         getMovieListCoroutine()
+
         progressBar.visibility = View.GONE
     }
 

@@ -33,11 +33,12 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         super.onDestroy()
         job.cancel()
     }
-
+  
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         progressBar = findViewById(R.id.progressBar)
+
         val userLogin: EditText = findViewById(R.id.login)
         val password: EditText = findViewById(R.id.password)
         val loginButton: Button = findViewById(R.id.login_button)
