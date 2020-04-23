@@ -78,7 +78,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/view_map"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_marginStart="20dp"
@@ -87,10 +87,10 @@
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/myinput"
-        android:text="Edit Profile"
+        android:text="View Map"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profilePhoto" />
@@ -111,7 +111,7 @@
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/view_map" />
 
     <ProgressBar
         android:id="@+id/progressBar"
