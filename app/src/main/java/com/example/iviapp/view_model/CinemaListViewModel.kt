@@ -1,7 +1,6 @@
 package com.example.iviapp.view_model
 
 import android.content.Context
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.iviapp.model.cinema.Cinema
 import com.example.iviapp.model.cinema.CinemaDao
@@ -14,4 +13,7 @@ class CinemaListViewModel(context: Context) : ViewModel() {
         return cinemaDao.getAllCinema()
     }
 
+    fun addCinemaListToDatabase(list: List<Cinema>){
+        cinemaDao.insertAllCinema(list)
+    }
 }

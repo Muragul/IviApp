@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IviApp</string>
+    <string name="app_name">KinoPark</string>
     <string name="action_settings">Profile</string>
     <string name="name_movie">Movie Title</string>
     <string name="movie_details">Movie Details</string>
