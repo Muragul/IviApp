@@ -17,6 +17,7 @@ import com.crashlytics.android.Crashlytics
 import com.example.iviapp.R
 import com.example.iviapp.view.activity.MainActivity
 import com.example.iviapp.model.account.CurrentUser
+import com.example.iviapp.view.activity.MapsActivity
 import com.example.iviapp.view_model.ProfileViewModel
 import com.example.iviapp.view_model.ViewModelProviderFactory
 import com.google.firebase.crashlytics.internal.CrashlyticsNativeComponent
@@ -70,7 +71,10 @@ class ThirdFragment : Fragment() {
                 }
             }
         })
-
+        viewMap.setOnClickListener{
+            val intent = Intent(rootView.context, MapsActivity::class.java)
+            startActivity(intent)
+        }
         logoutBtn.setOnClickListener {
             profileViewModel.logout(rootView)
         }
