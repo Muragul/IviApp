@@ -4,20 +4,27 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.crashlytics.android.Crashlytics
 import com.example.iviapp.R
 import com.example.iviapp.model.account.*
 import com.example.iviapp.view_model.AuthViewModel
 import com.example.iviapp.view_model.ViewModelProviderFactory
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
+import io.fabric.sdk.android.Fabric
+import kotlinx.android.synthetic.main.profile_page.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var authViewModel: AuthViewModel
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +33,16 @@ class MainActivity : AppCompatActivity() {
         val userLogin: EditText = findViewById(R.id.login)
         val password: EditText = findViewById(R.id.password)
         val loginButton: Button = findViewById(R.id.login_button)
+
+
+        // Obtain the FirebaseAnalytics instance.
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "item_id")
+
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT,bundle)
+
 
         val viewModelProviderFactory = ViewModelProviderFactory(this)
         authViewModel = ViewModelProvider(this, viewModelProviderFactory)
@@ -55,6 +72,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun saveSession() {
         val savedUser: SharedPreferences =
             this.getSharedPreferences("current_user", Context.MODE_PRIVATE)
@@ -77,5 +96,18 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this@MainActivity, "No such user", Toast.LENGTH_SHORT).show()
         progressBar.visibility = View.GONE
     }
+
+    private fun setKey(key: String){
+        Crashlytics.setString(key, "foo")
+
+        Crashlytics.setBool(key, true )
+
+        Crashlytics.setDouble(key, 1.0)
+
+        Crashlytics.setFloat(key, 1.0f)
+
+        Crashlytics.setInt(key, 1)
+    }
+
 
 }

@@ -13,12 +13,17 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.crashlytics.android.Crashlytics
 import com.example.iviapp.R
 import com.example.iviapp.view.activity.MainActivity
 import com.example.iviapp.model.account.CurrentUser
 import com.example.iviapp.view.activity.MapsActivity
 import com.example.iviapp.view_model.ProfileViewModel
 import com.example.iviapp.view_model.ViewModelProviderFactory
+import com.google.firebase.crashlytics.internal.CrashlyticsNativeComponent
+import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
+import kotlinx.android.synthetic.main.profile_page.view.*
+import okhttp3.internal.userAgent
 
 class ThirdFragment : Fragment() {
     private lateinit var profileViewModel: ProfileViewModel
@@ -36,7 +41,7 @@ class ThirdFragment : Fragment() {
             ) as ViewGroup
         val name: TextView = rootView.findViewById(R.id.name)
         val logoutBtn: Button = rootView.findViewById(R.id.logout)
-        val viewMap: Button = rootView.findViewById(R.id.view_map)
+        val crashBtn: Button = rootView.findViewById(R.id.crash)
         name.text = CurrentUser.user.userName
         progressBar = rootView.findViewById(R.id.progressBar)
 
@@ -72,6 +77,23 @@ class ThirdFragment : Fragment() {
         }
         logoutBtn.setOnClickListener {
             profileViewModel.logout(rootView)
+        }
+
+        crashBtn.setOnClickListener {
+            Crashlytics.getInstance().crash()
+            Crashlytics.setUserIdentifier("user1")
+        }
+
+        fun setKey(key: String){
+            Crashlytics.setString(key, "foo")
+
+            Crashlytics.setBool(key, true )
+
+            Crashlytics.setDouble(key, 1.0)
+
+            Crashlytics.setFloat(key, 1.0f)
+
+            Crashlytics.setInt(key, 1)
         }
         return rootView
     }
