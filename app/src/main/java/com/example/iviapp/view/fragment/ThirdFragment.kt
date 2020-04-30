@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.iviapp.R
 import com.example.iviapp.view.activity.MainActivity
 import com.example.iviapp.model.account.CurrentUser
+import com.example.iviapp.view.activity.MapsActivity
 import com.example.iviapp.view_model.ProfileViewModel
 import com.example.iviapp.view_model.ViewModelProviderFactory
 
@@ -35,6 +36,7 @@ class ThirdFragment : Fragment() {
             ) as ViewGroup
         val name: TextView = rootView.findViewById(R.id.name)
         val logoutBtn: Button = rootView.findViewById(R.id.logout)
+        val viewMap: Button = rootView.findViewById(R.id.view_map)
         name.text = CurrentUser.user.userName
         progressBar = rootView.findViewById(R.id.progressBar)
 
@@ -64,7 +66,10 @@ class ThirdFragment : Fragment() {
                 }
             }
         })
-
+        viewMap.setOnClickListener{
+            val intent = Intent(rootView.context, MapsActivity::class.java)
+            startActivity(intent)
+        }
         logoutBtn.setOnClickListener {
             profileViewModel.logout(rootView)
         }

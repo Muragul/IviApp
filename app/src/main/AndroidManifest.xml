@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.iviapp">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -11,10 +13,17 @@
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name= "com.example.iviapp.view.activity.MainActivity"/>
-        <activity android:name="com.example.iviapp.view.activity.SecondActivity" />
-        <activity android:name="com.example.iviapp.view.activity.DetailActivity" />
-        <activity android:name="com.example.iviapp.view.activity.StartActivity">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="@string/map_key"/>
+
+        <activity
+            android:name=".view.activity.MapsActivity"
+            android:label="@string/title_activity_maps" />
+        <activity android:name=".view.activity.MainActivity" />
+        <activity android:name=".view.activity.SecondActivity" />
+        <activity android:name=".view.activity.DetailActivity" />
+        <activity android:name=".view.activity.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
