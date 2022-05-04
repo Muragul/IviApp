@@ -15,15 +15,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.crashlytics.android.Crashlytics
 import com.example.iviapp.R
-import com.example.iviapp.view.activity.MainActivity
 import com.example.iviapp.model.account.CurrentUser
+import com.example.iviapp.view.activity.MainActivity
 import com.example.iviapp.view.activity.MapsActivity
 import com.example.iviapp.view_model.ProfileViewModel
 import com.example.iviapp.view_model.ViewModelProviderFactory
-import com.google.firebase.crashlytics.internal.CrashlyticsNativeComponent
-import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
-import kotlinx.android.synthetic.main.profile_page.view.*
-import okhttp3.internal.userAgent
 
 class ThirdFragment : Fragment() {
     private lateinit var profileViewModel: ProfileViewModel
@@ -40,6 +36,7 @@ class ThirdFragment : Fragment() {
                 container, false
             ) as ViewGroup
         val name: TextView = rootView.findViewById(R.id.name)
+        val viewMap: Button = rootView.findViewById(R.id.view_map)
         val logoutBtn: Button = rootView.findViewById(R.id.logout)
         val crashBtn: Button = rootView.findViewById(R.id.crash)
         name.text = CurrentUser.user.userName
@@ -71,7 +68,7 @@ class ThirdFragment : Fragment() {
                 }
             }
         })
-        viewMap.setOnClickListener{
+        viewMap.setOnClickListener {
             val intent = Intent(rootView.context, MapsActivity::class.java)
             startActivity(intent)
         }
@@ -84,10 +81,10 @@ class ThirdFragment : Fragment() {
             Crashlytics.setUserIdentifier("user1")
         }
 
-        fun setKey(key: String){
+        fun setKey(key: String) {
             Crashlytics.setString(key, "foo")
 
-            Crashlytics.setBool(key, true )
+            Crashlytics.setBool(key, true)
 
             Crashlytics.setDouble(key, 1.0)
 
